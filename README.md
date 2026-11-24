@@ -1,6 +1,6 @@
 # DSH Task Traffic Light
 
-<img src="docs/banner-en.svg" width="760" alt="Red: a session is working. Yellow: something waits for you. Green: a session finished and you have not opened it yet.">
+<img src="docs/demo.gif" width="720" alt="The lamps light as sessions run and wait; clicking a lamp opens the matching session and its dot clears.">
 
 A floating traffic light for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) on macOS. It sits at the edge of your screen and tells you what your agents are doing — without switching windows to find out.
 

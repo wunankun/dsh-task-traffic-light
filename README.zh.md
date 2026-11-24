@@ -1,6 +1,6 @@
 # DSH 任务红绿灯
 
-<img src="docs/banner-zh.svg" width="760" alt="红灯：有会话在干活。黄灯：有东西等你处理。绿灯：跑完了你还没看。">
+<img src="docs/demo.gif" width="720" alt="会话在跑时亮红灯，有东西等你时亮黄灯；点一下灯就跳到对应会话，绿点消了绿灯才灭。">
 
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 用的 macOS 悬浮红绿灯。贴在屏幕边上，不用切窗口就知道几个 agent 在干嘛、哪个在等你。
 
