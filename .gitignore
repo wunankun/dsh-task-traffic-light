@@ -6,3 +6,5 @@ node_modules/
 macos/TaskTrafficLight.app/
 macos/build/
 *.zip
+
+__pycache__/
