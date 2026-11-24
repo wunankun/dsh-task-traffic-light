@@ -1,7 +1,5 @@
 # DSH Task Traffic Light
 
-<img src="docs/demo.gif" width="720" alt="The lamps light as sessions run and wait; clicking a lamp opens the matching session and its dot clears.">
-
 A floating traffic light for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) on macOS. It sits at the edge of your screen and tells you what your agents are doing — without switching windows to find out.
 
 [中文说明](README.zh.md) · [MIT](LICENSE)
