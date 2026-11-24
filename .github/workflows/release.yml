@@ -43,6 +43,10 @@ jobs:
           node --check client.js
 
       - name: Publish
+        # Publishing is skipped until the repository has an NPM_TOKEN secret,
+        # so a release never goes red just because npm is not wired up yet.
+        if: env.NPM_TOKEN != ''
         run: npm publish
         env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
