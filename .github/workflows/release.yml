@@ -1,0 +1,48 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  app:
+    name: macOS app
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build universal bundle
+        run: ./macos/build.sh
+
+      - name: Package
+        run: ditto -c -k --sequesterRsrc --keepParent macos/TaskTrafficLight.app TaskTrafficLight.zip
+
+      - name: Publish release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TaskTrafficLight.zip
+          generate_release_notes: true
+
+  npm:
+    name: npm package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Check the sources parse
+        run: |
+          node --check index.js
+          node --check client.js
+
+      - name: Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

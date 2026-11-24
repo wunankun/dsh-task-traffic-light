@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Task traffic light",
+    "description": "Publishes DeepSeek Harness task state to ~/.dsh/task-traffic-light/state.json so the standalone TaskTrafficLight macOS app can show a red (working), yellow (waiting for you), green (a Session finished unread) or dim green (idle) lamp. While the yellow lamp is lit, clicking it brings DSH to the front and switches to the first waiting session (only the first when several wait at once). The green lamp mirrors the unread completion dots in DSH: clicking it switches to the oldest Session whose dot is still lit, and the lamp goes out only once every dot has been cleared. It adds no DSH UI and sends nothing over the network; disable it when the Mac app is not used."
+  }
+}

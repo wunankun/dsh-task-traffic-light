@@ -1,0 +1,56 @@
+{
+  "name": "dsh-task-traffic-light",
+  "version": "0.3.0",
+  "description": "A macOS traffic light for DeepSeek Harness: red while sessions work, yellow when one waits for you, green while finished sessions are still unread. Clicking a lit lamp brings DSH to the front and opens the matching session.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "traffic-light",
+    "macos",
+    "menu-bar",
+    "notifications"
+  ],
+  "homepage": "https://github.com/wunankun/dsh-task-traffic-light#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wunankun/dsh-task-traffic-light.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wunankun/dsh-task-traffic-light/issues"
+  },
+  "engines": {
+    "dsh": ">=0.2.1"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-workspace",
+        "@deepseek-ai/dsh-client-ui-session"
+      ]
+    }
+  }
+}

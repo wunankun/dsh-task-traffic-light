@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+*.log
+
+# Build output
+macos/TaskTrafficLight.app/
+macos/build/
+*.zip

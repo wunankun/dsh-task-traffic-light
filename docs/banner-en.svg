@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="220" viewBox="0 0 760 220" role="img" aria-label="DSH task traffic light: red while working, yellow while waiting, green while a finished session is unread">
+  <rect width="760" height="220" rx="18" fill="#0f1013"/>
+  <rect x="46" y="30" width="96" height="160" rx="22" fill="#1b1c20" stroke="#33353b"/>
+  <circle cx="94" cy="70" r="26" fill="#ff5b50" opacity="0.18"/>
+  <circle cx="94" cy="110" r="26" fill="#ffd60a" opacity="0.18"/>
+  <circle cx="94" cy="150" r="26" fill="#30d158" opacity="0.18"/>
+  <circle cx="94" cy="70" r="20" fill="#ff5b50"/>
+  <circle cx="94" cy="110" r="20" fill="#ffd60a"/>
+  <circle cx="94" cy="150" r="20" fill="#30d158"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif">
+    <text x="186" y="64" fill="#f2f3f5" font-size="21" font-weight="600">red</text>
+    <text x="238" y="64" fill="#9aa0a6" font-size="21">· a session is working</text>
+    <text x="186" y="104" fill="#f2f3f5" font-size="21" font-weight="600">yellow</text>
+    <text x="272" y="104" fill="#9aa0a6" font-size="21">· something waits for you</text>
+    <text x="186" y="144" fill="#f2f3f5" font-size="21" font-weight="600">green</text>
+    <text x="256" y="144" fill="#9aa0a6" font-size="21">· finished, not opened yet</text>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">
+    <text x="186" y="182" fill="#6f747b">click a lit lamp to jump to that session</text>
+  </g>
+</svg>

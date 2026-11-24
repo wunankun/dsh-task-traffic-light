@@ -1,0 +1,37 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  plugin:
+    name: Plugin sources
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Parse check
+        run: |
+          node --check index.js
+          node --check client.js
+
+      - name: Manifests are valid JSON
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('locale/zh.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('locale/en.json','utf8'))"
+
+  app:
+    name: macOS app
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build universal bundle
+        run: ./macos/build.sh
