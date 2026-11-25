@@ -1,98 +1,96 @@
-# DSH Task Traffic Light
+# DSH 任务红绿灯
 
-A floating traffic light for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) on macOS. It sits at the edge of your screen and tells you what your agents are doing — without switching windows to find out.
+给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 用的 macOS 悬浮红绿灯。贴在屏幕边上，不用切窗口就知道几个 agent 在干嘛、哪个在等你。
 
-<img src="docs/demo.gif" width="452" alt="The lamp lights as sessions run and wait; it stays green until you open the finished session.">
+<img src="docs/demo.gif" width="452" alt="会话在跑时亮红灯，有东西等你时亮黄灯；绿灯一直亮到你打开那个会话。">
 
-[中文说明](README.zh.md) · [MIT](LICENSE)
+**简体中文** · [English](README.en.md) · [Español](README.es.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [MIT](LICENSE)
 
-## Three lamps, three facts
+## 三盏灯，三件事
 
-| Lamp | Lit while | Click it and it |
+| 灯 | 什么时候亮 | 点一下 |
 |---|---|---|
-| 🔴 red | at least one top-level session is running | — (informational) |
-| 🟡 yellow | a session waits for your approval or answer | brings DSH forward and opens the **first** waiting session |
-| 🟢 green | a finished session still shows its unread dot in DSH | brings DSH forward and opens the **oldest** unread session |
+| 🔴 红灯 | 至少有一个顶层会话在跑 | ——（只是显示） |
+| 🟡 黄灯 | 有会话在等你批准或回答 | 把 DSH 带到最前，切到**第一个**在等的会话 |
+| 🟢 绿灯 | 有会话跑完了，DSH 里那颗未读绿点还没消 | 把 DSH 带到最前，切到**最早完成**的那个 |
 
-The lamps are independent: a red and a green lamp can be lit at the same time.
+三盏灯互相独立，红灯和绿灯可以同时亮。
 
-## Install
+## 安装
 
-**1 — the plugin** (inside DSH):
+**第一步，装插件**（在 DSH 里）：
 
 ```sh
 dsh plugin add dsh-task-traffic-light
 ```
 
-Or install it from the plugin market in the app. Most setups need a page refresh afterwards.
+也可以在 DSH 的插件市场里点安装。装完刷新一次页面。
 
-**2 — the app:**
+**第二步，装小应用**：
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/main/scripts/install-app.sh | sh
 ```
 
-The script installs `TaskTrafficLight.app` into `/Applications` and launches it. Prefer to do it by hand? Download `TaskTrafficLight.zip` from [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest), unzip, drag it to Applications, and right-click → Open the first time (the build is ad-hoc signed, not notarized).
+脚本会把 `TaskTrafficLight.app` 放进 `/Applications` 并打开。想手动也行：[Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest) 下载 `TaskTrafficLight.zip`，解压拖进"应用程序"，第一次右键 → 打开（ad-hoc 签名，没有公证）。
 
-You can also skip the terminal: open **Plugins → this plugin** in DSH and press **Install the lamp app** — the plugin downloads the release, unpacks it into `/Applications`, clears the quarantine flag and launches it. After that the control follows the app: **Running v1.2** while it is open, **Start the lamp app** after you quit it, and **Update to v…** when a newer build ships.
+懒得开终端的话：在 DSH 里打开 **插件 → 这个插件**，右上角有「安装红绿灯小应用」，点一下它就会下载发布包、解压进 `/Applications`、去掉隔离标记并启动。之后那个位置会跟着小应用的状态走：开着显示「已开启 v1.2」，关掉了变成「开启小应用」，有新版本则显示「更新到 v…」。
 
-**3 — go.** Restart DSH, refresh its page, and put the lamp where you like. Drag it anywhere; the position is remembered.
+**第三步**：重启 DSH、刷新页面，把灯拖到你顺眼的位置。位置会记住。
 
-**Updates.** There is only one thing to update: the plugin. Once the app is installed, the next start replaces it with whatever version the plugin ships. A missing app is never installed on its own — that stays a click.
+**更新**：只有一样东西要更新——插件。小应用装过一次之后，下次启动会自己换成插件里带的那一版。没装过的机器不会自作主张装，那一步始终要你点。
 
-## The green lamp follows DSH, not a timestamp
+## 绿灯为什么跟着 DSH 走
 
-DSH already puts a small green dot in front of a session that finished while you were looking elsewhere. That dot is the truth this app renders:
+DSH 本来就会给"跑完了、但你当时没在看"的会话，在列表里标一颗绿点。红绿灯的绿灯就是这颗点的镜子：
 
-- the lamp is lit while at least one session carries that dot;
-- opening the session — by clicking the lamp or any other way — clears the dot, and the lamp follows within a second;
-- the lamp goes out only when the last dot is gone.
+- 只要还有会话带着绿点，灯就亮着；
+- 你打开那个会话（点灯或者自己点都行），绿点一消，灯一秒内跟着灭；
+- 最后一点消完，绿灯才灭。
 
-With several unread sessions, each click opens the oldest one and clears it, so clicking twice walks a small queue.
+有好几个没看的时候，每点一次切到最早完成、把它消掉，所以连点两下就是在排队处理。
 
-## How it works
+## 它是怎么工作的
 
 ```
-DSH Host plugin ──writes──> ~/.dsh/task-traffic-light/state.json <──reads── TaskTrafficLight.app
-        ▲                                                                        │
-        └────── /api/task-light/focus (authenticated, same-origin) ◀── focus.json ┘
+DSH Host 插件 ──写──> ~/.dsh/task-traffic-light/state.json <──读── TaskTrafficLight.app
+        ▲                                                                 │
+        └────── /api/task-light/focus（带认证、同源）◀── focus.json ────────┘
 ```
 
-- The plugin writes a snapshot: running count, pending interactions, waiting session ids, unread session ids, token speed.
-- The app polls that file and draws the lamps.
-- A click writes `focus.json`; the plugin validates it against the lamp it came from and hands it to the Web UI over DSH's own authenticated local channel. The page opens the session and acknowledges the request.
-- Subagent sessions are filtered out: they have no row to open, so they can never hold a lamp on.
+- 插件写一份快照：在跑数量、待处理交互、等待中的会话 id、未读完成的会话 id、实时速度。
+- 小应用轮询这个文件画灯。
+- 点击时写 `focus.json`，插件先确认目标会话确实还亮着那盏灯，再通过 DSH 自己的本机认证通道交给前端；页面切过去后回执。
+- 子代理会话被过滤掉：它们在列表里没有行，永远点不掉，所以不能把灯卡住。
 
-## Privacy
+## 隐私
 
-No listening port. The plugin writes one JSON file under `~/.dsh/task-traffic-light/`; the app writes one more when you click a lamp. Nothing leaves the machine on its own.
+不开端口。插件只在 `~/.dsh/task-traffic-light/` 下写一个 JSON，小应用在你点灯时再写一个。平时不会有任何数据离开本机。
 
-The one exception is the install button on the plugin page: pressing it downloads the release archive from GitHub and runs the system's own `ditto`, `xattr` and `open` to put the app in place. It never runs otherwise, and uninstalling the plugin removes that button. The whole thing is about 600 lines of JavaScript and 500 lines of Swift — small enough to read in one sitting.
+唯一的例外是插件页上那个安装按钮：按下时才会去 GitHub 下载发布包，并调用系统自带的 `ditto`、`xattr`、`open` 把应用装好。不点就不会发生，卸载插件这个按钮也跟着消失。
 
-## Requirements
+## 环境要求
 
-- macOS 13 or later, Apple silicon or Intel (the release build is universal)
-- DeepSeek Harness 0.2.1 or later with a profile you can add plugins to
+- macOS 13 或更新（Apple 芯片或 Intel，发布包是 universal）
+- DeepSeek Harness 0.2.1 或更新，且能往 profile 里加插件
 
-The app's own menus are in Chinese for now — a localization PR would be very welcome.
+## 出问题怎么办
 
-## Troubleshooting
+**三盏灯全黑。** 10 秒内没更新过 `state.json` 就按"DSH 没在跑"处理。确认插件启用了（`dsh plugin list`），再 `tail -f ~/.dsh/task-traffic-light/state.json` 看看有没有在刷新。
 
-**All lamps stay dark.** No fresh `state.json` within 10 seconds means "DSH is not running". Check the plugin is enabled (`dsh plugin list`), then `tail -f ~/.dsh/task-traffic-light/state.json`.
+**点了没反应。** 点击是由 DSH 页面执行的，所以页面必须加载到插件的客户端那一半——装完刷新一次页面。超过 30 秒的点击会静默过期。
 
-**Clicking does nothing.** The click is applied by the DSH page, so it needs a page that has loaded the plugin's client half: refresh DSH once after installing. A request older than 30 seconds expires quietly.
+**灯亮着但看着没事。** 插件只统计顶层会话，子代理不会单独点亮任何灯。
 
-**The lamp shows DSH as online but everything is idle.** The plugin only counts top-level sessions; subagents never light anything on their own.
-
-## Build from source
+## 自己编译
 
 ```sh
 git clone https://github.com/wunankun/dsh-task-traffic-light
 cd dsh-task-traffic-light
-./macos/build.sh          # universal binary, needs the Xcode command line tools
+./macos/build.sh          # 编 universal，需要 Xcode 命令行工具
 open macos/TaskTrafficLight.app
 ```
 
-## License
+## 许可证
 
 MIT © 2026 wunankun

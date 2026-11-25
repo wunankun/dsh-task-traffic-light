@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0 — 2026-11-25
+
+- The README is Chinese by default now, with switchers to English, Spanish,
+  Japanese and Korean.
+- The plugin card also ships Spanish and Japanese text, following DSH's own
+  interface language.
+
 ## 0.8.0 — 2026-11-25
 
 - The plugin page now reports whether the lamp is open, not just installed:

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Semáforo de tareas DSH",
+    "description": "Un semáforo flotante para macOS que muestra el estado de las sesiones de DeepSeek Harness: rojo mientras una sesión trabaja, amarillo mientras espera tu aprobación o respuesta, verde mientras una sesión terminada sigue sin leerse. Al pulsar una luz encendida, DSH pasa al frente y abre la sesión correspondiente. No añade interfaz dentro de DSH ni envía nada por la red."
+  }
+}
