@@ -38,6 +38,8 @@ You can also skip the terminal: open **Plugins → this plugin** in DSH and pres
 
 **3 — go.** Restart DSH, refresh its page, and put the lamp where you like. Drag it anywhere; the position is remembered.
 
+**Updates.** There is only one thing to update: the plugin. Once the app is installed, the next start replaces it with whatever version the plugin ships. A missing app is never installed on its own — that stays a click.
+
 ## The green lamp follows DSH, not a timestamp
 
 DSH already puts a small green dot in front of a session that finished while you were looking elsewhere. That dot is the truth this app renders:

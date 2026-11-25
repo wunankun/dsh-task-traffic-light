@@ -111,6 +111,11 @@ async function installApp() {
     mkdirSync(unpacked, { recursive: true })
     await run('/usr/bin/ditto', ['-x', '-k', zip, unpacked])
 
+    // Stop the running copy first: replacing the bundle on disk would leave
+    // the old binary running in memory. Quitting through AppleScript would ask
+    // for an automation grant, so the process is stopped directly.
+    await run('/usr/bin/pkill', ['-f', `${APP_NAME}/Contents/MacOS/TaskTrafficLight`]).catch(() => {})
+
     mkdirSync(appDirectory(), { recursive: true })
     const target = join(appDirectory(), APP_NAME)
     rmSync(target, { recursive: true, force: true })
@@ -125,6 +130,25 @@ async function installApp() {
 }
 
 /**
+ * Keep an already-installed companion app current: a plugin update that ships
+ * a newer app replaces it on the next start, so there is only one thing to
+ * update. A missing app is left alone — installing is always the user's click.
+ * @param {number} delayMs - wait before touching the network.
+ * @returns {() => void} cancels the pending check.
+ */
+function scheduleAppUpdate(delayMs = 3_000) {
+  const timer = setTimeout(() => {
+    const installed = installedAppVersion()
+    if (installed === null || installed === APP_VERSION) return
+    void installApp().catch(() => {
+      // Offline, or GitHub unreachable: the next start tries again.
+    })
+  }, delayMs)
+  if (typeof timer.unref === 'function') timer.unref()
+  return () => clearTimeout(timer)
+}
+
+/**
  * Publish task state to the macOS app.
  *
  * Only top-level sessions count: a subagent belongs to the session that
@@ -132,7 +156,7 @@ async function installApp() {
  * lights green on its own. Pending questions and approvals still count
  * globally because they always need the human.
  */
-export function apply(ctx) {
+export function apply(ctx, config) {
   /** @type {Map<object, boolean>} top-level agent -> running */
   const sessions = new Map()
   /** @type {WeakSet<object>} agents owned by a session, excluded from counts */
@@ -587,8 +611,10 @@ export function apply(ctx) {
     publish(true)
     const ticker = setInterval(() => publish(), TICK_MS)
     if (typeof ticker.unref === 'function') ticker.unref()
+    const cancelAppUpdate = config?.autoUpdateApp === false ? () => {} : scheduleAppUpdate()
     return () => {
       clearInterval(ticker)
+      cancelAppUpdate()
       try {
         mkdirSync(STATE_DIR, { recursive: true })
         const temporary = STATE_FILE + '.tmp'

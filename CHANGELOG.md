@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 — 2026-11-25
+
+- An installed companion app now follows the plugin: on startup the plugin
+  compares the installed version with the one it ships and replaces a stale
+  copy, so updating the plugin is the only update there is. A missing app is
+  never installed on its own — that stays the button's job.
+- Updating stops the running lamp first, so the new build is what actually
+  starts; before, the old process kept running from memory.
+
 ## 0.4.0 — 2026-11-25
 
 - The plugin's own page in the plugin manager gets a button that installs or
