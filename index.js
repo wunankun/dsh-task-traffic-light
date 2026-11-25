@@ -81,6 +81,19 @@ function installedAppVersion() {
 }
 
 /**
+ * Whether the companion app is running right now. Matching is by the bundle's
+ * own executable path, which is what the update path stops as well.
+ * @returns {Promise<boolean>} true while the process exists.
+ */
+function appRunning() {
+  return new Promise(resolve => {
+    execFile('/usr/bin/pgrep', ['-f', `${APP_NAME}/Contents/MacOS/TaskTrafficLight`], error => {
+      resolve(error === null)
+    })
+  })
+}
+
+/**
  * Run one macOS command and reject with its stderr.
  * @param {string} command - absolute executable path.
  * @param {string[]} args - arguments.
@@ -128,6 +141,22 @@ async function installApp() {
     return installedAppVersion()
   } finally {
     rmSync(work, { recursive: true, force: true })
+  }
+}
+
+/**
+ * What the plugin page needs to know about the companion app: whether it is
+ * installed, which version, and whether it is open right now.
+ * @returns {Promise<{ installed: boolean, version: string | null, latest: string, running: boolean, supported: boolean }>} state.
+ */
+async function appStatus() {
+  const version = macOS ? installedAppVersion() : null
+  return {
+    installed: version !== null,
+    version,
+    latest: APP_VERSION,
+    running: version !== null && macOS ? await appRunning() : false,
+    supported: macOS,
   }
 }
 
@@ -560,21 +589,26 @@ export function apply(ctx, config) {
             return Response.json({ error: 'body is not JSON' }, { status: 400 })
           }
           if (body !== null && typeof body === 'object' && body.action === 'status') {
-            const version = macOS ? installedAppVersion() : null
-            return Response.json({
-              installed: version !== null,
-              version,
-              latest: APP_VERSION,
-              supported: macOS,
-            })
+            return Response.json(await appStatus())
+          }
+          if (body !== null && typeof body === 'object' && body.action === 'open') {
+            if (!macOS) return Response.json({ error: 'the companion app is macOS only' }, { status: 501 })
+            if (installedAppVersion() === null) {
+              return Response.json({ error: 'not installed yet' }, { status: 404 })
+            }
+            await run('/usr/bin/open', [join(appDirectory(), APP_NAME)]).catch(() => {})
+            // Give the process a moment to appear before reporting it.
+            await new Promise(resolve => setTimeout(resolve, 700))
+            return Response.json(await appStatus())
           }
           if (body !== null && typeof body === 'object' && body.action === 'install') {
             if (!macOS) {
               return Response.json({ error: 'the companion app is macOS only' }, { status: 501 })
             }
             try {
-              const version = await installApp()
-              return Response.json({ installed: version !== null, version, latest: APP_VERSION })
+              await installApp()
+              await new Promise(resolve => setTimeout(resolve, 700))
+              return Response.json(await appStatus())
             } catch (error) {
               const message = error instanceof Error ? error.message : String(error)
               return Response.json({ error: message }, { status: 500 })

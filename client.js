@@ -33,8 +33,10 @@ window.__ModuleLoader__.load({
         checking: '检测小应用…',
         install: '安装红绿灯小应用',
         installing: '正在下载安装…',
-        installed: '小应用已安装',
-        update: '更新小应用到',
+        opening: '正在开启…',
+        open: '开启小应用',
+        running: '已开启',
+        update: '更新到',
         retry: '重试安装',
         unreachable: '连不上插件',
       }
@@ -42,8 +44,10 @@ window.__ModuleLoader__.load({
         checking: 'Checking the app…',
         install: 'Install the lamp app',
         installing: 'Downloading…',
-        installed: 'Lamp app installed',
-        update: 'Update the lamp app to',
+        opening: 'Starting…',
+        open: 'Start the lamp app',
+        running: 'Running',
+        update: 'Update to',
         retry: 'Retry install',
         unreachable: 'plugin unreachable',
       }
@@ -98,13 +102,18 @@ window.__ModuleLoader__.load({
       }
     }
 
-    /** Install/update button; checks the installed version when it mounts. */
-    function AppInstall() {
+    /**
+     * The control on this plugin's page. It reports whether the companion app
+     * is installed and whether it is open right now, and offers the one action
+     * that makes sense: install, update, or start it.
+     */
+    function AppControl() {
       const [state, setState] = React.useState({ phase: 'checking' })
+      const busy = React.useRef(false)
 
       /**
        * Fold one Host answer into the component state.
-       * @param {object | null} result - `status` or `install` answer.
+       * @param {object | null} result - `status`, `open` or `install` answer.
        */
       const absorb = React.useCallback(result => {
         if (result === null) {
@@ -124,46 +133,66 @@ window.__ModuleLoader__.load({
           setState({ phase: 'missing', latest: result.latest })
           return
         }
+        const outdated = result.version !== undefined && result.version !== null && result.version !== result.latest
         setState({
-          phase: result.version !== undefined && result.version !== null && result.version !== result.latest
-            ? 'outdated'
-            : 'installed',
+          phase: outdated ? 'outdated' : result.running === true ? 'running' : 'stopped',
           version: result.version,
           latest: result.latest,
         })
       }, [])
 
-      React.useEffect(() => {
-        let live = true
-        void (async () => {
-          const result = await post(APP_ROUTE, { action: 'status' })
-          if (live) absorb(result)
-        })()
-        return () => { live = false }
+      const query = React.useCallback(async () => {
+        const result = await post(APP_ROUTE, { action: 'status' })
+        if (!busy.current) absorb(result)
       }, [absorb])
 
+      React.useEffect(() => {
+        void query()
+        // Quit or reopen the app while this page stays open, and the state follows.
+        const ticker = window.setInterval(() => { void query() }, 3000)
+        return () => { window.clearInterval(ticker) }
+      }, [query])
+
       const install = React.useCallback(async () => {
+        busy.current = true
         setState({ phase: 'installing' })
-        const result = await post(APP_ROUTE, { action: 'install' })
-        absorb(result)
+        absorb(await post(APP_ROUTE, { action: 'install' }))
+        busy.current = false
+      }, [absorb])
+
+      const start = React.useCallback(async () => {
+        busy.current = true
+        setState({ phase: 'opening' })
+        absorb(await post(APP_ROUTE, { action: 'open' }))
+        busy.current = false
       }, [absorb])
 
       if (state.phase === 'checking') return h('span', { style: noteStyle }, LABEL.checking)
-
-      if (state.phase === 'installing') {
-        return h('button', { type: 'button', style: { ...buttonStyle, opacity: 0.55, cursor: 'default' }, disabled: true }, LABEL.installing)
-      }
-
-      if (state.phase === 'installed') {
-        return h('span', { style: noteStyle },
-          h('span', { style: dotStyle }),
-          `${LABEL.installed} v${state.version ?? state.latest}`)
-      }
-
       if (state.phase === 'hidden') return null
 
+      if (state.phase === 'installing' || state.phase === 'opening') {
+        return h('button', {
+          type: 'button',
+          style: { ...buttonStyle, opacity: 0.55, cursor: 'default' },
+          disabled: true,
+        }, state.phase === 'opening' ? LABEL.opening : LABEL.installing)
+      }
+
+      if (state.phase === 'running') {
+        return h('span', { style: noteStyle }, h('span', { style: dotStyle }), `${LABEL.running} v${state.version ?? state.latest}`)
+      }
+
       if (state.phase === 'outdated') {
-        return h('button', { type: 'button', style: buttonStyle, onClick: install, title: `v${state.version} → v${state.latest}` }, `${LABEL.update} v${state.latest}`)
+        return h('button', {
+          type: 'button',
+          style: buttonStyle,
+          onClick: install,
+          title: `v${state.version} → v${state.latest}`,
+        }, `${LABEL.update} v${state.latest}`)
+      }
+
+      if (state.phase === 'stopped') {
+        return h('button', { type: 'button', style: buttonStyle, onClick: start }, LABEL.open)
       }
 
       const label = state.phase === 'error' ? LABEL.retry : LABEL.install
@@ -185,7 +214,7 @@ window.__ModuleLoader__.load({
       if (subject.kind !== 'bundle' && subject.kind !== 'row') return null
       if (subject.pkg === undefined || subject.pkg.name !== PACKAGE) return null
       if (subject.kind === 'row' && subject.row?.moduleName !== PACKAGE) return null
-      return h(AppInstall, null)
+      return h(AppControl, null)
     }
 
     return {

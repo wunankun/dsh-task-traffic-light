@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0 — 2026-11-25
+
+- The plugin page now reports whether the lamp is open, not just installed:
+  a stopped app gets a **Start the lamp app** button, a running one shows
+  *Running*, and the state follows the app within a few seconds of quitting or
+  reopening it.
+
 ## 0.5.0 — 2026-11-25
 
 - An installed companion app now follows the plugin: on startup the plugin
