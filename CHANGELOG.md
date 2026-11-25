@@ -1,19 +1,5 @@
 # Changelog
 
-## 0.7.0 — 2026-11-25
-
-- Withdrawn: the Windows build. The companion app is macOS-only again, so the
-  plugin reports `supported: false` off macOS and renders no control there at
-  all. The 0.6.0 Windows asset was pulled from the release.
-
-## 0.6.0 — 2026-11-25
-
-- Windows build: a native WinForms panel (`windows/`) reading the same
-  `state.json` and writing the same `focus.json`, so one plugin serves both
-  platforms. Self-contained single file, no .NET install needed.
-- On Windows the plugin page offers a download link instead of the macOS
-  installer, and the automatic app update stays off.
-
 ## 0.5.0 — 2026-11-25
 
 - An installed companion app now follows the plugin: on startup the plugin
