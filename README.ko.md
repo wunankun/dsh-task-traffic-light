@@ -1,5 +1,12 @@
 # DSH 작업 신호등
 
+[![npm](https://img.shields.io/npm/v/dsh-task-traffic-light?label=npm)](https://www.npmjs.com/package/dsh-task-traffic-light)
+[![downloads](https://img.shields.io/npm/dm/dsh-task-traffic-light?label=downloads)](https://www.npmjs.com/package/dsh-task-traffic-light)
+[![check](https://github.com/wunankun/dsh-task-traffic-light/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/wunankun/dsh-task-traffic-light/actions/workflows/check.yml)
+[![release](https://img.shields.io/github/v/release/wunankun/dsh-task-traffic-light?label=release)](https://github.com/wunankun/dsh-task-traffic-light/releases/latest)
+[![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
+[![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
+
 macOS용 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 플로팅 신호등입니다. 화면 가장자리에 붙어 있어서, 창을 전환하지 않아도 에이전트가 지금 무엇을 하는지, 어느 세션이 내 답을 기다리는지 알 수 있습니다.
 
 <img src="docs/demo.gif" width="452" alt="세션이 돌아가는 동안은 빨강, 기다리는 동안은 노랑, 끝난 세션을 열기 전까지 초록이 켜집니다.">

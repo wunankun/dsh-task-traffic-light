@@ -1,5 +1,12 @@
 # DSH 任务红绿灯
 
+[![npm](https://img.shields.io/npm/v/dsh-task-traffic-light?label=npm)](https://www.npmjs.com/package/dsh-task-traffic-light)
+[![downloads](https://img.shields.io/npm/dm/dsh-task-traffic-light?label=downloads)](https://www.npmjs.com/package/dsh-task-traffic-light)
+[![check](https://github.com/wunankun/dsh-task-traffic-light/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/wunankun/dsh-task-traffic-light/actions/workflows/check.yml)
+[![release](https://img.shields.io/github/v/release/wunankun/dsh-task-traffic-light?label=release)](https://github.com/wunankun/dsh-task-traffic-light/releases/latest)
+[![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
+[![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
+
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 用的 macOS 悬浮红绿灯。贴在屏幕边上，不用切窗口就知道几个 agent 在干嘛、哪个在等你。
 
 <img src="docs/demo.gif" width="452" alt="会话在跑时亮红灯，有东西等你时亮黄灯；绿灯一直亮到你打开那个会话。">
