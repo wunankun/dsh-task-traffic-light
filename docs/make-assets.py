@@ -38,7 +38,7 @@ CANVAS_W = 452
 def panel(name):
     """One screenshot without the capture's top border row."""
     img = Image.open(os.path.join(SRC_DIR, name)).convert("RGB").crop((0, 1, SIZE[0], SIZE[1]))
-    return img.resize((SIZE[0] * SCALE, SIZE[1] * SCALE), Image.LANCZOS)
+    return img.resize((SIZE[0] * SCALE, (SIZE[1] - 1) * SCALE), Image.LANCZOS)
 
 
 def card(name, zh, en):
