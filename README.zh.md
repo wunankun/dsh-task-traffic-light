@@ -71,7 +71,7 @@ DSH Host 插件 ──写──> ~/.dsh/task-traffic-light/state.json <──读
 
 ## 环境要求
 
-- macOS 13 或更新（Apple 芯片或 Intel，发布包是 universal），或 Windows 10/11 x64
+- macOS 13 或更新（Apple 芯片或 Intel，发布包是 universal）
 - DeepSeek Harness 0.2.1 或更新，且能往 profile 里加插件
 
 ## 出问题怎么办

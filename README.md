@@ -36,10 +36,6 @@ The script installs `TaskTrafficLight.app` into `/Applications` and launches it.
 
 You can also skip the terminal: open **Plugins → this plugin** in DSH and press **Install the lamp app** — the plugin downloads the release, unpacks it into `/Applications`, clears the quarantine flag and launches it. Once installed, that button reads the version instead.
 
-### Windows
-
-There is a native Windows build: download `TaskTrafficLight-win-x64.zip` from [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest), unzip, and run `TaskTrafficLight.exe`. It is a self-contained single file — no .NET install, no installer, no admin rights — and it reads the same state file, so the same plugin drives it. On Windows the plugin's page shows **Get the Windows build** instead of the macOS installer.
-
 **3 — go.** Restart DSH, refresh its page, and put the lamp where you like. Drag it anywhere; the position is remembered.
 
 **Updates.** There is only one thing to update: the plugin. Once the app is installed, the next start replaces it with whatever version the plugin ships. A missing app is never installed on its own — that stays a click.
@@ -75,7 +71,7 @@ The one exception is the install button on the plugin page: pressing it download
 
 ## Requirements
 
-- macOS 13 or later, Apple silicon or Intel (the release build is universal), or Windows 10/11 x64
+- macOS 13 or later, Apple silicon or Intel (the release build is universal)
 - DeepSeek Harness 0.2.1 or later with a profile you can add plugins to
 
 The app's own menus are in Chinese for now — a localization PR would be very welcome.

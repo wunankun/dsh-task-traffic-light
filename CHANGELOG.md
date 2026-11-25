@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 — 2026-11-25
+
+- Withdrawn: the Windows build. The companion app is macOS-only again, so the
+  plugin reports `supported: false` off macOS and renders no control there at
+  all. The 0.6.0 Windows asset was pulled from the release.
+
 ## 0.6.0 — 2026-11-25
 
 - Windows build: a native WinForms panel (`windows/`) reading the same

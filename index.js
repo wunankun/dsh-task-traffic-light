@@ -43,8 +43,7 @@ const APP_VERSION = '1.2'
 const APP_NAME = 'TaskTrafficLight.app'
 /** Version-free asset name, so this URL keeps resolving after every release. */
 const APP_ZIP_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest/download/TaskTrafficLight.zip'
-/** Where Windows users pick up their build; the installer here is macOS-only. */
-const RELEASES_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest'
+/** The companion app is macOS-only; other hosts simply have no button. */
 const macOS = process.platform === 'darwin'
 
 /** State file layout version; the macOS app tolerates older and newer fields. */
@@ -567,12 +566,11 @@ export function apply(ctx, config) {
               version,
               latest: APP_VERSION,
               supported: macOS,
-              url: RELEASES_URL,
             })
           }
           if (body !== null && typeof body === 'object' && body.action === 'install') {
             if (!macOS) {
-              return Response.json({ error: 'this installer is macOS only', url: RELEASES_URL }, { status: 501 })
+              return Response.json({ error: 'the companion app is macOS only' }, { status: 501 })
             }
             try {
               const version = await installApp()
