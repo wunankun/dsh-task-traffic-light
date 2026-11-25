@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.2 — 2026-11-25
+
+- The panel no longer draws an outer shadow: it sits flat on the desktop,
+  with only the lit border and the lamps' own glow. Companion app 1.4.
+
 ## 0.10.1 — 2026-11-25
 
 Same release as 0.10.0. npm kept the first upload in its staging area for a

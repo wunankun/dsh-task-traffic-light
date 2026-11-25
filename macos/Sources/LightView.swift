@@ -164,11 +164,9 @@ final class LightView: NSView {
         ]
         housing.borderWidth = 1
         housing.borderColor = NSColor(white: 1, alpha: 0.14).cgColor
+        // No outer shadow: the panel sits flat on the desktop and only the
+        // lit border carries the state, so there is no halo around it.
         housing.masksToBounds = false
-        housing.shadowColor = NSColor.black.cgColor
-        housing.shadowOpacity = 0.38
-        housing.shadowRadius = 10
-        housing.shadowOffset = CGSize(width: 0, height: -3)
         layer?.addSublayer(housing)
 
         for lamp in lamps {
@@ -376,22 +374,12 @@ final class LightView: NSView {
         } else {
             housing.borderWidth = 1
             housing.borderColor = NSColor(white: 1, alpha: 0.14).cgColor
-            housing.shadowPath = nil
-            housing.shadowColor = NSColor.black.cgColor
-            housing.shadowOpacity = 0.38
-            housing.shadowRadius = 10
-            housing.shadowOffset = CGSize(width: 0, height: -3)
         }
     }
 
     private func applyBorderGlow(color: NSColor) {
         housing.borderWidth = 1.5
         housing.borderColor = color.withAlphaComponent(0.9).cgColor
-        housing.shadowPath = CGPath(roundedRect: housing.bounds, cornerWidth: 14, cornerHeight: 14, transform: nil)
-        housing.shadowColor = color.cgColor
-        housing.shadowOpacity = 0.5
-        housing.shadowRadius = 7
-        housing.shadowOffset = .zero
     }
 
 
