@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.1 — 2026-11-25
+
+Same release as 0.10.0; the registry had a staged 0.10.0 that could
+not be published over.
+
 ## 0.10.0 — 2026-11-25
 
 - The red lamp is clickable too: each click moves to the next running session,
