@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.10.0 — 2026-11-25
+
+- The red lamp is clickable too: each click moves to the next running session,
+  in the order they started. Every clickable lamp shows a pointing hand.
+- A session that finishes while the DSH window is out of sight now counts as
+  unread, even when it is the one selected: DSH only knows the main view, not
+  whether its window is visible. Coming back to the window clears it.
+- Companion app 1.3.
+
 ## 0.9.0 — 2026-11-25
 
 - The README is Chinese by default now, with switchers to English, Spanish,

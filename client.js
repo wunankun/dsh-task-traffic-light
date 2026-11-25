@@ -223,6 +223,12 @@ window.__ModuleLoader__.load({
         let disposed = false
         let polling = false
         let seen = lastNonce()
+        /** Sessions that finished while this window was not in front of the user. */
+        const backgroundDone = new Set()
+        /** Last running state seen per Session, so a stop can be noticed at all. */
+        const lastRunning = new Map()
+        /** Whether the DSH window is out of sight right now. */
+        let background = isBackground()
 
         /**
          * Read the last click this page already applied, so a reload does not
@@ -250,6 +256,59 @@ window.__ModuleLoader__.load({
         }
 
         /**
+         * Is the DSH window out of sight? A hidden tab or another window on
+         * top both mean the user is not watching, which is exactly when a
+         * completion should light the lamp even if DSH itself would not mark it.
+         * @returns {boolean} true when the page is hidden or unfocused.
+         */
+        function isBackground() {
+          if (document.visibilityState !== 'visible') return true
+          return document.hasFocus() === false
+        }
+
+        /**
+         * Notice sessions that stopped running while the window was hidden.
+         * DSH only marks a completion unread when the session is not the main
+         * view, so a session you are "looking at" from another window would
+         * otherwise never reach the lamp.
+         */
+        function trackBackgroundCompletions() {
+          let statuses
+          try {
+            statuses = ctx.uiSession.sessionStatus.getSnapshot()
+          } catch (_error) {
+            return
+          }
+          const present = new Set()
+          for (const [id, status] of statuses) {
+            const key = String(id)
+            present.add(key)
+            const running = status !== undefined && status.running === true
+            const previous = lastRunning.get(key)
+            if (running) {
+              backgroundDone.delete(key)
+            } else if (previous === true && background) {
+              backgroundDone.add(key)
+            }
+            lastRunning.set(key, running)
+          }
+          for (const key of lastRunning.keys()) {
+            if (!present.has(key)) lastRunning.delete(key)
+          }
+        }
+
+        /**
+         * Everything the green lamp should account for: DSH's own reminder
+         * dots plus the completions seen while the window was out of sight.
+         * @returns {string[]} Session ids.
+         */
+        function reportedCompleted() {
+          const ids = new Set(unreadSessionIds())
+          for (const id of backgroundDone) ids.add(id)
+          return [...ids]
+        }
+
+        /**
          * Sessions whose completion the user still has not opened, as DSH's
          * own reminder dots see them.
          * @returns {string[]} Session ids; empty when the status source is not ready.
@@ -271,9 +330,11 @@ window.__ModuleLoader__.load({
           if (polling || disposed) return
           polling = true
           try {
-            // One request carries both directions: which Sessions still have a
-            // reminder dot, and whether a lamp click waits to be applied.
-            const result = await post(FOCUS_ROUTE, { action: 'poll', completed: unreadSessionIds() })
+            background = isBackground()
+            trackBackgroundCompletions()
+            // One request carries both directions: which Sessions still need a
+            // look, and whether a lamp click waits to be applied.
+            const result = await post(FOCUS_ROUTE, { action: 'poll', completed: reportedCompleted() })
             const request = result?.request
             if (request === null || request === undefined || typeof request !== 'object') return
             const { sessionId, nonce } = request
@@ -297,10 +358,26 @@ window.__ModuleLoader__.load({
         }
 
         ctx.effect(() => {
+          /**
+           * Coming back to the window means the user has seen it: the
+           * background-only completions stop holding the green lamp on.
+           */
+          const onFocusChange = () => {
+            const next = isBackground()
+            if (background && !next) backgroundDone.clear()
+            background = next
+          }
+          window.addEventListener('visibilitychange', onFocusChange)
+          window.addEventListener('focus', onFocusChange)
+          window.addEventListener('blur', onFocusChange)
+
           const ticker = window.setInterval(() => { void poll() }, POLL_MS)
           return () => {
             disposed = true
             window.clearInterval(ticker)
+            window.removeEventListener('visibilitychange', onFocusChange)
+            window.removeEventListener('focus', onFocusChange)
+            window.removeEventListener('blur', onFocusChange)
           }
         }, 'task-light-bridge: focus poll')
 

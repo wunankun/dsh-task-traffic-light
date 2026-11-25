@@ -10,6 +10,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var toggleItem: NSMenuItem?
     private var pollTimer: Timer?
     private var lastState: LightState = .offline
+    /// Session the last red-lamp click opened, so repeated clicks walk the list.
+    private var lastRedTarget: String?
     /// Click request the Host plugin hands to the DSH Web UI.
     private let focusFileURL = FileManager.default
         .homeDirectoryForCurrentUser
@@ -54,6 +56,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         lightView.autoresizingMask = [.width, .height]
         lightView.focusCompleted = { [weak self] in
             self?.focusCompleted()
+        }
+        lightView.focusRunning = { [weak self] in
+            self?.focusRunning()
         }
         lightView.focusWaiting = { [weak self] in
             self?.focusWaiting()
@@ -117,6 +122,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         lightView.waiting = waiting
         lightView.completed = completed
         lightView.tokensPerSecond = running > 0 ? state.tokensPerSecond : nil
+    }
+
+    /// Red-lamp click: walk the running Sessions, one click per Session. The
+    /// order comes from the bridge, so a second click moves to the next one
+    /// instead of reopening the same window.
+    private func focusRunning() {
+        let ids = lastState.runningSessions
+        guard lastState.online, !ids.isEmpty else { return }
+        let next: String
+        if let last = lastRedTarget, let index = ids.firstIndex(of: last) {
+            next = ids[(index + 1) % ids.count]
+        } else {
+            next = ids[0]
+        }
+        lastRedTarget = next
+        writeFocusRequest(sessionId: next, lamp: "red")
+        focusHarness()
     }
 
     /// Green-lamp click: point the Host at the oldest unfinished Session, then

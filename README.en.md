@@ -10,11 +10,11 @@ A floating traffic light for [DeepSeek Harness](https://github.com/deepseek-ai/d
 
 | Lamp | Lit while | Click it and it |
 |---|---|---|
-| 🔴 red | at least one top-level session is running | — (informational) |
+| 🔴 red | at least one top-level session is running | brings DSH forward and opens the **next** running session (each click moves on) |
 | 🟡 yellow | a session waits for your approval or answer | brings DSH forward and opens the **first** waiting session |
 | 🟢 green | a finished session still shows its unread dot in DSH | brings DSH forward and opens the **oldest** unread session |
 
-The lamps are independent: a red and a green lamp can be lit at the same time.
+The lamps are independent: a red and a green lamp can be lit at the same time. Any lamp that can do something turns the pointer into a hand.
 
 ## Install
 
@@ -49,6 +49,8 @@ DSH already puts a small green dot in front of a session that finished while you
 - the lamp goes out only when the last dot is gone.
 
 With several unread sessions, each click opens the oldest one and clears it, so clicking twice walks a small queue.
+
+One case DSH does not mark is covered here too: a completion of the currently selected session **while the DSH window is out of sight** — another app in front, or the tab hidden — counts as unread and lights the lamp. DSH only knows which session is the main view, not whether its window is visible; coming back to the window clears that reminder.
 
 ## How it works
 

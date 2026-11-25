@@ -39,7 +39,7 @@ const SPEED_WINDOW_MS = 2_500
 /** The shortest span a fresh stream is averaged over, so the first second is not inflated. */
 const MIN_SPAN_MS = 700
 /** The companion app this plugin is half of; its version tracks the macOS release. */
-const APP_VERSION = '1.2'
+const APP_VERSION = '1.3'
 const APP_NAME = 'TaskTrafficLight.app'
 /** Version-free asset name, so this URL keeps resolving after every release. */
 const APP_ZIP_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest/download/TaskTrafficLight.zip'
@@ -47,7 +47,7 @@ const APP_ZIP_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases
 const macOS = process.platform === 'darwin'
 
 /** State file layout version; the macOS app tolerates older and newer fields. */
-const STATE_VERSION = 5
+const STATE_VERSION = 6
 /** Most Session ids one report may carry; a guard against a runaway client. */
 const MAX_REPORTED = 200
 
@@ -201,6 +201,8 @@ export function apply(ctx, config) {
   let reportedUnread = []
   /** @type {Map<string, number>} Session id -> when it last stopped running, for the green queue. */
   const stoppedAt = new Map()
+  /** @type {Map<string, number>} Session id -> when it started running, for the red queue. */
+  const startedAt = new Map()
   /** Latest top-level completion, kept until a newer one replaces it. */
   let doneAt = 0
   /** Latest yellow-lamp click waiting for the Web UI, or null once answered. */
@@ -316,9 +318,24 @@ export function apply(ctx, config) {
   }
 
   function runningCount() {
-    let count = 0
-    for (const running of sessions.values()) if (running) count += 1
-    return count
+    return runningSessionIds().length
+  }
+
+  /**
+   * Sessions running right now, oldest start first. The app walks this list on
+   * every click of the red lamp, so the order has to be stable while they run.
+   * @returns {string[]} Session ids.
+   */
+  function runningSessionIds() {
+    const ids = []
+    for (const [agent, running] of sessions) {
+      if (!running) continue
+      const id = sessionIdOf(agent)
+      if (id !== undefined) ids.push(id)
+    }
+    ids.sort((left, right) => (startedAt.get(left) ?? Number.MAX_SAFE_INTEGER)
+      - (startedAt.get(right) ?? Number.MAX_SAFE_INTEGER))
+    return ids
   }
 
   function summaryTone() {
@@ -418,11 +435,13 @@ export function apply(ctx, config) {
     }
     if (request === null || typeof request !== 'object') return
     const { sessionId, nonce } = request
-    const lamp = request.lamp === 'green' ? 'green' : 'yellow'
+    const lamp = request.lamp === 'green' ? 'green' : request.lamp === 'red' ? 'red' : 'yellow'
     const at = typeof request.at === 'number' ? request.at : now
     if (typeof sessionId !== 'string' || typeof nonce !== 'string') return
     if (now - at > FOCUS_TTL_MS || at - now > 5_000) return
-    const targets = lamp === 'green' ? completedSessionIds() : waitingSessionIds()
+    const targets = lamp === 'green'
+      ? completedSessionIds()
+      : lamp === 'red' ? runningSessionIds() : waitingSessionIds()
     if (!targets.includes(sessionId)) return
     focusRequest = { sessionId, nonce, at, lamp }
   }
@@ -464,6 +483,7 @@ export function apply(ctx, config) {
       pending: pending.size,
       waitingSessions: waitingSessionIds(),
       completedSessions: completedSessionIds(),
+      runningSessions: runningSessionIds(),
       updatedAt: now,
       doneAt: doneAt > 0 ? doneAt : null,
       tokensPerSecond: speed,
@@ -480,7 +500,8 @@ export function apply(ctx, config) {
     readFocusFile(now)
     const payload = buildPayload()
     const signature = JSON.stringify([payload.running, payload.pending, payload.sessions,
-      payload.waitingSessions, payload.completedSessions, payload.doneAt, payload.tokensPerSecond])
+      payload.waitingSessions, payload.completedSessions, payload.runningSessions,
+      payload.doneAt, payload.tokensPerSecond])
     if (!force && signature === lastSignature && now - lastWriteAt < HEARTBEAT_MS) return
     try {
       mkdirSync(STATE_DIR, { recursive: true })
@@ -551,8 +572,13 @@ export function apply(ctx, config) {
     sessions.set(agent, status === 'running')
     const sessionId = sessionIdOf(agent)
     if (sessionId !== undefined) {
-      if (status === 'running') stoppedAt.delete(sessionId)
-      else if (wasRunning) stoppedAt.set(sessionId, Date.now())
+      if (status === 'running') {
+        stoppedAt.delete(sessionId)
+        startedAt.set(sessionId, Date.now())
+      } else if (wasRunning) {
+        startedAt.delete(sessionId)
+        stoppedAt.set(sessionId, Date.now())
+      }
     }
     if (wasRunning && status !== 'running') doneAt = Date.now()
     publish(true)
@@ -562,7 +588,10 @@ export function apply(ctx, config) {
     streams.delete(agent)
     if (subagents.has(agent)) return
     const sessionId = sessionIdOf(agent)
-    if (sessionId !== undefined) stoppedAt.delete(sessionId)
+    if (sessionId !== undefined) {
+      stoppedAt.delete(sessionId)
+      startedAt.delete(sessionId)
+    }
     sessions.delete(agent)
     publish(true)
   })
@@ -671,6 +700,7 @@ export function apply(ctx, config) {
           pending: 0,
           waitingSessions: [],
           completedSessions: [],
+          runningSessions: [],
           updatedAt: Date.now(),
           doneAt: null,
           tokensPerSecond: null,

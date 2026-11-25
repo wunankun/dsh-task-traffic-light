@@ -13,6 +13,8 @@ struct LightState {
     let waitingSessions: [String]
     /// Sessions DSH still marks with a completion dot, oldest completion first.
     let completedSessions: [String]
+    /// Sessions running right now, oldest start first, for the red lamp's cycle.
+    let runningSessions: [String]
     let tokensPerSecond: Double?
 
     static let offline = LightState(
@@ -21,6 +23,7 @@ struct LightState {
         pending: 0,
         waitingSessions: [],
         completedSessions: [],
+        runningSessions: [],
         tokensPerSecond: nil
     )
 }
@@ -31,6 +34,7 @@ struct BridgeState: Decodable {
     let pending: Int?
     let waitingSessions: [String]?
     let completedSessions: [String]?
+    let runningSessions: [String]?
     let tokensPerSecond: Double?
 }
 
@@ -52,6 +56,7 @@ final class StateReader {
             pending: max(0, state.pending ?? 0),
             waitingSessions: state.waitingSessions ?? [],
             completedSessions: state.completedSessions ?? [],
+            runningSessions: state.runningSessions ?? [],
             tokensPerSecond: state.tokensPerSecond
         )
     }
@@ -100,6 +105,10 @@ final class LightView: NSView {
     /// unread completion dot, so the owner can focus DSH and switch to it.
     var focusCompleted: (() -> Void)?
 
+    /// Called when the red lamp is clicked while a Session runs, so the owner
+    /// can focus DSH and walk through them one click at a time.
+    var focusRunning: (() -> Void)?
+
     /// Called when the yellow lamp is clicked while a Session waits for the
     /// human, so the owner can focus DSH and switch to the first one.
     var focusWaiting: (() -> Void)?
@@ -111,6 +120,7 @@ final class LightView: NSView {
             guard oldValue != runningCount else { return }
             updateLamps()
             updateSpeedBadge()
+            window?.invalidateCursorRects(for: self)
         }
     }
 
@@ -258,7 +268,9 @@ final class LightView: NSView {
 
     override func mouseUp(with event: NSEvent) {
         if !dragged, let pressPoint {
-            if waiting, amberLampFrame().insetBy(dx: -5, dy: -5).contains(pressPoint) {
+            if runningCount > 0, redLampFrame().insetBy(dx: -5, dy: -5).contains(pressPoint) {
+                focusRunning?()
+            } else if waiting, amberLampFrame().insetBy(dx: -5, dy: -5).contains(pressPoint) {
                 focusWaiting?()
             } else if completed, greenLampFrame().insetBy(dx: -5, dy: -5).contains(pressPoint) {
                 focusCompleted?()
@@ -270,11 +282,17 @@ final class LightView: NSView {
         dragged = false
     }
 
-    /// The yellow and green lamps are clickable while their state is on.
+    /// Every lamp with something to open shows a pointing hand.
     override func resetCursorRects() {
         super.resetCursorRects()
+        if runningCount > 0 { addCursorRect(redLampFrame(), cursor: .pointingHand) }
         if waiting { addCursorRect(amberLampFrame(), cursor: .pointingHand) }
         if completed { addCursorRect(greenLampFrame(), cursor: .pointingHand) }
+    }
+
+    private func redLampFrame() -> CGRect {
+        let lamp = lamps[0].layer.frame
+        return lamp.offsetBy(dx: housing.frame.minX, dy: housing.frame.minY)
     }
 
     private func greenLampFrame() -> CGRect {
