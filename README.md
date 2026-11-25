@@ -34,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/mai
 
 The script installs `TaskTrafficLight.app` into `/Applications` and launches it. Prefer to do it by hand? Download `TaskTrafficLight.zip` from [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest), unzip, drag it to Applications, and right-click → Open the first time (the build is ad-hoc signed, not notarized).
 
+You can also skip the terminal: open **Plugins → this plugin** in DSH and press **Install the lamp app** — the plugin downloads the release, unpacks it into `/Applications`, clears the quarantine flag and launches it. Once installed, that button reads the version instead.
+
 **3 — go.** Restart DSH, refresh its page, and put the lamp where you like. Drag it anywhere; the position is remembered.
 
 ## The green lamp follows DSH, not a timestamp
@@ -61,7 +63,9 @@ DSH Host plugin ──writes──> ~/.dsh/task-traffic-light/state.json <──
 
 ## Privacy
 
-No listening port. No outbound network request. No shell command is executed. The plugin writes one JSON file under `~/.dsh/task-traffic-light/`; the app writes one more when you click a lamp. The whole thing is about 600 lines of JavaScript and 500 lines of Swift — small enough to read in one sitting.
+No listening port. The plugin writes one JSON file under `~/.dsh/task-traffic-light/`; the app writes one more when you click a lamp. Nothing leaves the machine on its own.
+
+The one exception is the install button on the plugin page: pressing it downloads the release archive from GitHub and runs the system's own `ditto`, `xattr` and `open` to put the app in place. It never runs otherwise, and uninstalling the plugin removes that button. The whole thing is about 600 lines of JavaScript and 500 lines of Swift — small enough to read in one sitting.
 
 ## Requirements
 

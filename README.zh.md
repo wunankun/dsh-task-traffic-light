@@ -34,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/mai
 
 脚本会把 `TaskTrafficLight.app` 放进 `/Applications` 并打开。想手动也行：[Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest) 下载 `TaskTrafficLight.zip`，解压拖进"应用程序"，第一次右键 → 打开（ad-hoc 签名，没有公证）。
 
+懒得开终端的话：在 DSH 里打开 **插件 → 这个插件**，右上角有「安装红绿灯小应用」，点一下它就会下载发布包、解压进 `/Applications`、去掉隔离标记并启动。装好之后那个按钮会变成版本号。
+
 **第三步**：重启 DSH、刷新页面，把灯拖到你顺眼的位置。位置会记住。
 
 ## 绿灯为什么跟着 DSH 走
@@ -61,7 +63,9 @@ DSH Host 插件 ──写──> ~/.dsh/task-traffic-light/state.json <──读
 
 ## 隐私
 
-不开端口、不联网、不执行任何命令。插件只在 `~/.dsh/task-traffic-light/` 下写一个 JSON，小应用在你点灯时再写一个。全部代码大约 600 行 JavaScript + 500 行 Swift，抽空能通读一遍。
+不开端口。插件只在 `~/.dsh/task-traffic-light/` 下写一个 JSON，小应用在你点灯时再写一个。平时不会有任何数据离开本机。
+
+唯一的例外是插件页上那个安装按钮：按下时才会去 GitHub 下载发布包，并调用系统自带的 `ditto`、`xattr`、`open` 把应用装好。不点就不会发生，卸载插件这个按钮也跟着消失。
 
 ## 环境要求
 

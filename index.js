@@ -14,8 +14,11 @@
  * elsewhere, not opened since"), so the lamp only goes out once the user has
  * opened every such Session and DSH has cleared its own dot.
  */
-import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
-import { homedir } from 'node:os'
+import { execFile } from 'node:child_process'
+import {
+  accessSync, constants, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync,
+} from 'node:fs'
+import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 export const name = 'task-traffic-light'
@@ -35,10 +38,91 @@ const HEARTBEAT_MS = 2_500
 const SPEED_WINDOW_MS = 2_500
 /** The shortest span a fresh stream is averaged over, so the first second is not inflated. */
 const MIN_SPAN_MS = 700
+/** The companion app this plugin is half of; its version tracks the macOS release. */
+const APP_VERSION = '1.2'
+const APP_NAME = 'TaskTrafficLight.app'
+/** Version-free asset name, so this URL keeps resolving after every release. */
+const APP_ZIP_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest/download/TaskTrafficLight.zip'
+
 /** State file layout version; the macOS app tolerates older and newer fields. */
 const STATE_VERSION = 5
 /** Most Session ids one report may carry; a guard against a runaway client. */
 const MAX_REPORTED = 200
+
+
+/**
+ * Where the companion app lives: `/Applications` when the user can write
+ * there, the per-user folder otherwise.
+ * @returns {string} directory path.
+ */
+function appDirectory() {
+  try {
+    accessSync('/Applications', constants.W_OK)
+    return '/Applications'
+  } catch (error) {
+    return join(homedir(), 'Applications')
+  }
+}
+
+/**
+ * Version of the installed companion app, read from its own Info.plist.
+ * @returns {string | null} version, or null when the app is not installed.
+ */
+function installedAppVersion() {
+  try {
+    const plist = readFileSync(join(appDirectory(), APP_NAME, 'Contents', 'Info.plist'), 'utf8')
+    const match = /<key>CFBundleShortVersionString<\/key>\s*<string>([^<]+)<\/string>/.exec(plist)
+    return match === null ? null : match[1].trim()
+  } catch (error) {
+    return null
+  }
+}
+
+/**
+ * Run one macOS command and reject with its stderr.
+ * @param {string} command - absolute executable path.
+ * @param {string[]} args - arguments.
+ * @returns {Promise<string>} stdout.
+ */
+function run(command, args) {
+  return new Promise((resolve, reject) => {
+    execFile(command, args, { timeout: 120_000 }, (error, stdout, stderr) => {
+      if (error === null) resolve(stdout)
+      else reject(new Error((stderr || error.message).trim() || `${command} failed`))
+    })
+  })
+}
+
+/**
+ * Download the latest release and install it over the existing copy. Only the
+ * system's own unarchiver, de-quarantine and open commands are used, and only
+ * when the user presses the install button on the plugin page.
+ * @returns {Promise<string | null>} the installed version.
+ */
+async function installApp() {
+  const work = mkdtempSync(join(tmpdir(), 'dsh-traffic-light-'))
+  try {
+    const response = await fetch(APP_ZIP_URL, { redirect: 'follow', signal: AbortSignal.timeout(120_000) })
+    if (!response.ok) throw new Error(`download failed: HTTP ${response.status}`)
+    const zip = join(work, 'app.zip')
+    writeFileSync(zip, Buffer.from(await response.arrayBuffer()))
+
+    const unpacked = join(work, 'unpacked')
+    mkdirSync(unpacked, { recursive: true })
+    await run('/usr/bin/ditto', ['-x', '-k', zip, unpacked])
+
+    mkdirSync(appDirectory(), { recursive: true })
+    const target = join(appDirectory(), APP_NAME)
+    rmSync(target, { recursive: true, force: true })
+    await run('/usr/bin/ditto', [join(unpacked, APP_NAME), target])
+    // The release build is ad-hoc signed, so a download carries quarantine.
+    await run('/usr/bin/xattr', ['-dr', 'com.apple.quarantine', target]).catch(() => {})
+    await run('/usr/bin/open', [target]).catch(() => {})
+    return installedAppVersion()
+  } finally {
+    rmSync(work, { recursive: true, force: true })
+  }
+}
 
 /**
  * Publish task state to the macOS app.
@@ -437,6 +521,33 @@ export function apply(ctx) {
   // cannot mount a new physical route from the profile's composition.
   ctx.inject(['connection'], (scope) => {
     scope.effect(() => {
+      const disposeApp = scope.connection.fetch.register({
+        path: '/api/task-light/app',
+        methods: ['POST'],
+        requestBody: 'buffered',
+        fetch: async request => {
+          let body
+          try {
+            body = await request.json()
+          } catch (error) {
+            return Response.json({ error: 'body is not JSON' }, { status: 400 })
+          }
+          if (body !== null && typeof body === 'object' && body.action === 'status') {
+            const version = installedAppVersion()
+            return Response.json({ installed: version !== null, version, latest: APP_VERSION })
+          }
+          if (body !== null && typeof body === 'object' && body.action === 'install') {
+            try {
+              const version = await installApp()
+              return Response.json({ installed: version !== null, version, latest: APP_VERSION })
+            } catch (error) {
+              const message = error instanceof Error ? error.message : String(error)
+              return Response.json({ error: message }, { status: 500 })
+            }
+          }
+          return Response.json({ error: `unknown action: ${String(body?.action)}` }, { status: 400 })
+        },
+      })
       const dispose = scope.connection.fetch.register({
         path: '/api/task-light/focus',
         methods: ['POST'],
@@ -466,6 +577,7 @@ export function apply(ctx) {
         },
       })
       return () => {
+        void disposeApp()
         void dispose()
       }
     }, 'task-light-bridge: focus route')

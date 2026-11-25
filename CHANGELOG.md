@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 — 2026-11-25
+
+- The plugin's own page in the plugin manager gets a button that installs or
+  updates the companion macOS app: it downloads the release, unpacks it into
+  `/Applications`, clears the quarantine flag and launches it. When the app is
+  already installed the button turns into a version readout.
+- Installing is the only thing that touches the network, and only when that
+  button is pressed.
+
 ## 0.3.0 — 2026-11-25
 
 First public release.
