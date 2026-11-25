@@ -2,8 +2,8 @@
 
 ## 0.10.1 — 2026-11-25
 
-Same release as 0.10.0; the registry had a staged 0.10.0 that could
-not be published over.
+Same release as 0.10.0. npm kept the first upload in its staging area for a
+few minutes, so the tag move needed a second version number.
 
 ## 0.10.0 — 2026-11-25
 
