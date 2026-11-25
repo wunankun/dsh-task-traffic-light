@@ -28,13 +28,15 @@ dsh plugin add dsh-task-traffic-light
 
 **2 — アプリ本体:**
 
+いちばん簡単なのは、DSH の **プラグイン → このプラグイン** を開いて **Install the lamp app** を押す方法です。プラグインが公開版をダウンロードし、`/Applications` に展開し、隔離属性を外して起動します。以後このボタンはアプリの状態に追随します——起動中は **Running v1.5**、終了すると **Start the lamp app**、新しい版が出ていれば **Update to v…**。ボタンの文言は英語と中国語のみです。
+
+ターミナルから入れることもできます:
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/main/scripts/install-app.sh | sh
 ```
 
 スクリプトは `TaskTrafficLight.app` を `/Applications` に入れて起動します。手動でも構いません。[Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest) から `TaskTrafficLight.zip` を落として解凍し、アプリケーションフォルダにドラッグ、初回だけ右クリック →「開く」（ad-hoc 署名で、公証は受けていません）。
-
-ターミナルを開かずに済ませるなら、DSH の **プラグイン → このプラグイン** を開き、**Install the lamp app** を押してください。プラグインが公開版をダウンロードし、`/Applications` に展開し、隔離属性を外して起動します。以後このボタンはアプリの状態に追随します——起動中は **Running v1.2**、終了すると **Start the lamp app**、新しい版が出ていれば **Update to v…**。ボタンの文言は英語と中国語のみです。
 
 **3 — 完了。** DSH を再起動し、ページを再読み込みしてから、信号機を好きな場所に置いてください。ドラッグで移動でき、位置は記憶されます。
 

@@ -30,13 +30,15 @@ dsh plugin add dsh-task-traffic-light
 
 **第二步，装小应用**：
 
+最省事的做法：在 DSH 里打开 **插件 → 这个插件**，右上角有「安装红绿灯小应用」，点一下它就会下载发布包、解压进 `/Applications`、去掉隔离标记并启动。之后那个位置会跟着小应用的状态走：开着显示「已开启 v1.5」，关掉了变成「开启小应用」，有新版本则显示「更新到 v…」。
+
+不想点界面，也可以用命令：
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/main/scripts/install-app.sh | sh
 ```
 
-脚本会把 `TaskTrafficLight.app` 放进 `/Applications` 并打开。想手动也行：[Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest) 下载 `TaskTrafficLight.zip`，解压拖进"应用程序"，第一次右键 → 打开（ad-hoc 签名，没有公证）。
-
-懒得开终端的话：在 DSH 里打开 **插件 → 这个插件**，右上角有「安装红绿灯小应用」，点一下它就会下载发布包、解压进 `/Applications`、去掉隔离标记并启动。之后那个位置会跟着小应用的状态走：开着显示「已开启 v1.2」，关掉了变成「开启小应用」，有新版本则显示「更新到 v…」。
+脚本同样会把它放进 `/Applications` 并打开。想手动也行：[Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest) 下载 `TaskTrafficLight.zip`，解压拖进"应用程序"，第一次右键 → 打开（ad-hoc 签名，没有公证）。
 
 **第三步**：重启 DSH、刷新页面，把灯拖到你顺眼的位置。位置会记住。
 

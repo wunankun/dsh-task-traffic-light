@@ -28,13 +28,15 @@ También puedes instalarlo desde el mercado de plugins de la aplicación. Casi s
 
 **2 — la aplicación:**
 
+Lo más sencillo: abre **Plugins → este plugin** en DSH y pulsa **Install the lamp app**. El plugin descarga la versión publicada, la descomprime en `/Applications`, quita la cuarentena y la abre. A partir de ahí el control sigue a la aplicación: **Running v1.5** mientras está abierta, **Start the lamp app** cuando la cierras y **Update to v…** cuando hay una versión nueva. Los textos de la interfaz están en inglés o chino.
+
+También puedes hacerlo desde la terminal:
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/main/scripts/install-app.sh | sh
 ```
 
 El script instala `TaskTrafficLight.app` en `/Applications` y la abre. ¿Prefieres hacerlo a mano? Descarga `TaskTrafficLight.zip` desde [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest), descomprímelo, arrástralo a Aplicaciones y haz clic derecho → Abrir la primera vez (la compilación está firmada ad hoc, sin notarizar).
-
-También puedes evitar la terminal: abre **Plugins → este plugin** en DSH y pulsa **Install the lamp app**. El plugin descarga la versión publicada, la descomprime en `/Applications`, quita la cuarentena y la abre. A partir de ahí el control sigue a la aplicación: **Running v1.2** mientras está abierta, **Start the lamp app** cuando la cierras y **Update to v…** cuando hay una versión nueva. Los textos de la interfaz están en inglés o chino.
 
 **3 — listo.** Reinicia DSH, refresca su página y coloca el semáforo donde quieras. Se puede arrastrar a cualquier sitio; la posición se recuerda.
 

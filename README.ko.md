@@ -28,13 +28,15 @@ dsh plugin add dsh-task-traffic-light
 
 **2 — 앱:**
 
+가장 간단한 방법: DSH에서 **플러그인 → 이 플러그인**을 열고 **Install the lamp app**을 누르세요. 플러그인이 배포판을 내려받아 `/Applications`에 풀고, 격리 속성을 지운 뒤 실행합니다. 이후 이 버튼은 앱 상태를 따라갑니다. 실행 중이면 **Running v1.5**, 종료하면 **Start the lamp app**, 새 버전이 있으면 **Update to v…**. 버튼 문구는 영어와 중국어만 지원합니다.
+
+터미널에서 설치할 수도 있습니다:
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/main/scripts/install-app.sh | sh
 ```
 
 스크립트가 `TaskTrafficLight.app`을 `/Applications`에 넣고 실행합니다. 직접 해도 됩니다. [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest)에서 `TaskTrafficLight.zip`을 내려받아 압축을 풀고 응용 프로그램 폴더로 끌어다 놓은 뒤, 처음 한 번만 우클릭 → 열기 (ad-hoc 서명이라 공증은 받지 않았습니다).
-
-터미널을 열고 싶지 않다면 DSH에서 **플러그인 → 이 플러그인**을 열고 **Install the lamp app**을 누르세요. 플러그인이 배포판을 내려받아 `/Applications`에 풀고, 격리 속성을 지운 뒤 실행합니다. 이후 이 버튼은 앱 상태를 따라갑니다. 실행 중이면 **Running v1.2**, 종료하면 **Start the lamp app**, 새 버전이 있으면 **Update to v…**. 버튼 문구는 영어와 중국어만 지원합니다.
 
 **3 — 끝.** DSH를 다시 시작하고 페이지를 새로 고친 뒤 신호등을 원하는 자리에 두세요. 드래그로 옮길 수 있고 위치는 기억됩니다.
 

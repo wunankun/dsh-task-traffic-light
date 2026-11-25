@@ -28,13 +28,15 @@ Or install it from the plugin market in the app. Most setups need a page refresh
 
 **2 — the app:**
 
+The easy way: open **Plugins → this plugin** in DSH and press **Install the lamp app**. It downloads the release, unpacks it into `/Applications`, clears the quarantine flag and launches it. After that the control follows the app: **Running v1.5** while it is open, **Start the lamp app** after you quit it, and **Update to v…** when a newer build ships.
+
+Or do it from a terminal:
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/main/scripts/install-app.sh | sh
 ```
 
 The script installs `TaskTrafficLight.app` into `/Applications` and launches it. Prefer to do it by hand? Download `TaskTrafficLight.zip` from [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest), unzip, drag it to Applications, and right-click → Open the first time (the build is ad-hoc signed, not notarized).
-
-You can also skip the terminal: open **Plugins → this plugin** in DSH and press **Install the lamp app** — the plugin downloads the release, unpacks it into `/Applications`, clears the quarantine flag and launches it. After that the control follows the app: **Running v1.2** while it is open, **Start the lamp app** after you quit it, and **Update to v…** when a newer build ships.
 
 **3 — go.** Restart DSH, refresh its page, and put the lamp where you like. Drag it anywhere; the position is remembered.
 
