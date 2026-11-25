@@ -1,6 +1,6 @@
 {
   "name": "dsh-task-traffic-light",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "A macOS traffic light for DeepSeek Harness: red while sessions work, yellow when one waits for you, green while finished sessions are still unread. Clicking a lit lamp brings DSH to the front and opens the matching session.",
   "type": "module",
   "license": "MIT",

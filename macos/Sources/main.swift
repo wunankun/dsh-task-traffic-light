@@ -8,6 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var lightView: LightView!
     private var statusItem: NSStatusItem?
     private var toggleItem: NSMenuItem?
+    private var speedItem: NSMenuItem?
     private var pollTimer: Timer?
     private var lastState: LightState = .offline
     /// Session the last red-lamp click opened, so repeated clicks walk the list.
@@ -19,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     private let originXKey = "panel.origin.x"
     private let originYKey = "panel.origin.y"
+    private let showsSpeedKey = "panel.showsSpeed"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -33,9 +35,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         )
     }
 
+    /// Whether the tok/s badge is on, remembered across launches.
+    private var showsSpeed: Bool {
+        UserDefaults.standard.object(forKey: showsSpeedKey) as? Bool ?? true
+    }
+
+    private var panelSize: NSSize {
+        LightView.windowSize(showsSpeed: showsSpeed)
+    }
+
     private func buildPanel() {
-        let size = LightView.windowSize
-        let origin = savedOrigin() ?? defaultOrigin(for: size)
+        let size = panelSize
+        let origin = savedOriginFor(size) ?? defaultOrigin(for: size)
         panel = TrafficLightPanel(
             contentRect: NSRect(origin: origin, size: size),
             styleMask: [.borderless, .nonactivatingPanel],
@@ -53,6 +64,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         panel.delegate = self
 
         lightView = LightView(frame: NSRect(origin: .zero, size: size))
+        lightView.showsSpeed = showsSpeed
         lightView.autoresizingMask = [.width, .height]
         lightView.focusCompleted = { [weak self] in
             self?.focusCompleted()
@@ -83,9 +95,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         menu.addItem(toggle)
         toggleItem = toggle
 
-        let reset = NSMenuItem(title: "回到默认位置", action: #selector(resetPosition), keyEquivalent: "")
-        reset.target = self
-        menu.addItem(reset)
+        let speed = NSMenuItem(title: showsSpeed ? "隐藏速率显示" : "开启速率显示",
+                               action: #selector(toggleSpeedDisplay), keyEquivalent: "")
+        speed.target = self
+        menu.addItem(speed)
+        speedItem = speed
 
         menu.addItem(.separator())
         let quit = NSMenuItem(title: "退出任务红绿灯", action: #selector(quit), keyEquivalent: "q")
@@ -193,7 +207,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     // MARK: Position
 
-    private func savedOrigin() -> NSPoint? {
+    private func savedOriginFor(_ size: NSSize) -> NSPoint? {
         let defaults = UserDefaults.standard
         guard defaults.object(forKey: originXKey) != nil,
               defaults.object(forKey: originYKey) != nil else { return nil }
@@ -201,7 +215,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             x: defaults.double(forKey: originXKey),
             y: defaults.double(forKey: originYKey)
         )
-        return clamped(point, for: LightView.windowSize)
+        return clamped(point, for: size)
     }
 
     private func defaultOrigin(for size: NSSize) -> NSPoint {
@@ -233,7 +247,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @objc private func screensChanged() {
-        let size = LightView.windowSize
+        let size = panelSize
         let origin = clamped(panel.frame.origin, for: size)
         panel.setFrameOrigin(origin)
     }
@@ -248,10 +262,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
-    @objc private func resetPosition() {
-        let origin = defaultOrigin(for: LightView.windowSize)
-        panel.setFrameOrigin(origin)
-        windowDidMove(Notification(name: NSWindow.didMoveNotification, object: panel))
+    /// Show or hide the speed bar, keeping the light body where it is: the
+    /// window grows upward, so the bottom edge (and the housing) stay put.
+    @objc private func toggleSpeedDisplay() {
+        let next = !showsSpeed
+        UserDefaults.standard.set(next, forKey: showsSpeedKey)
+        speedItem?.title = next ? "隐藏速率显示" : "开启速率显示"
+        lightView.showsSpeed = next
+        let size = LightView.windowSize(showsSpeed: next)
+        var frame = panel.frame
+        frame.size = size
+        frame.origin = clamped(frame.origin, for: size)
+        panel.setFrame(frame, display: true)
+        panel.contentView?.frame = NSRect(origin: .zero, size: size)
     }
 
     @objc private func quit() {

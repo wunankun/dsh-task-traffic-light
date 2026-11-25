@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.3 — 2026-11-26
+
+- The panel is 22 points shorter while the speed badge is hidden, and the
+  badge can be switched from the menu-bar menu (隐藏速率显示 / 开启速率显示);
+  the choice survives relaunches. Companion app 1.5.
+- The menu no longer has 回到默认位置: the panel is moved by dragging, and the
+  position it is dragged to is where it comes back.
+
 ## 0.10.2 — 2026-11-25
 
 - The panel no longer draws an outer shadow: it sits flat on the desktop,

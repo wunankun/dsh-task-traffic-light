@@ -18,7 +18,8 @@ Needs the Xcode command line tools (`swiftc`). The script builds `arm64` and `x8
 - A click is only a click: if the pointer moves more than two points, the gesture is a drag and nothing is triggered.
 - Every lamp with something to open shows a pointing hand cursor: red while sessions run, yellow while one waits, green while a finished session is unread.
 - Clicking the red lamp walks the running sessions, one per click, in the order the bridge lists them.
-- The speed badge above the body appears only while the red lamp is lit and the bridge publishes a rate.
+- The speed badge above the body appears only while the red lamp is lit and the bridge publishes a rate. Hide it from the menu-bar menu (隐藏速率显示 / 开启速率显示); the panel then shrinks by the badge's 22 points and the choice is stored in `UserDefaults`.
+- The menu-bar menu has three items: hide the panel, toggle the speed badge, quit.
 
 ## Signing
 

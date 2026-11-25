@@ -76,7 +76,13 @@ final class LightView: NSView {
     /// top for the speed reading so the body does not move when it appears.
     static let bodySize = NSSize(width: 68, height: 132)
     private static let speedBarHeight: CGFloat = 22
-    static let windowSize = NSSize(width: 68, height: bodySize.height + speedBarHeight)
+
+    /// The body never changes size; the speed bar is either there or not.
+    /// @param showsSpeed whether the tok/s badge is on screen.
+    /// @returns The window size for that setting.
+    static func windowSize(showsSpeed: Bool) -> NSSize {
+        NSSize(width: bodySize.width, height: bodySize.height + (showsSpeed ? speedBarHeight : 0))
+    }
 
     private static let housingInset: CGFloat = 8
     private static let lampDiameter: CGFloat = 26
@@ -148,6 +154,14 @@ final class LightView: NSView {
     /// Live output speed published by the bridge; shown only while running.
     var tokensPerSecond: Double? {
         didSet { updateSpeedBadge() }
+    }
+
+    /// The speed bar is optional: with it off the window is just the light body.
+    var showsSpeed = true {
+        didSet {
+            updateSpeedBadge()
+            needsLayout = true
+        }
     }
 
     override init(frame frameRect: NSRect) {
@@ -384,7 +398,7 @@ final class LightView: NSView {
 
 
     private func updateSpeedBadge() {
-        guard runningCount > 0, let tokensPerSecond else {
+        guard showsSpeed, runningCount > 0, let tokensPerSecond else {
             speedBadge.isHidden = true
             speedText.isHidden = true
             return
