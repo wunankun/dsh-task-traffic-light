@@ -25,11 +25,10 @@ SIZE = (98, 166)
 
 # (screenshot, Chinese line, English line, hold in ms)
 STATES = [
-    ("s1.png", "没有任务在跑", "idle", 1300),
-    ("s2.png", "有会话在跑", "working", 1300),
-    ("s3.png", "有东西在等你", "waiting for you", 1500),
-    ("s5.png", "跑完了，还没看", "finished, unread", 1500),
-    ("s4.png", "灯亮到你打开它", "until you open it", 1600),
+    ("s1.png", "没有任务在跑", "idle", 1400),
+    ("s2.png", "有会话在跑", "working", 1400),
+    ("s3.png", "有东西在等你", "waiting for you", 1600),
+    ("s4.png", "跑完了，还没看", "finished, unread", 1800),
 ]
 
 CANVAS_W = 452
@@ -65,7 +64,7 @@ def make_gif():
     frames = [card(name, zh, en) for name, zh, en, _ in STATES]
     durations = [hold for _, _, _, hold in STATES]
     out = "docs/demo.gif"
-    pal = [f.quantize(colors=128, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+    pal = [f.quantize(colors=256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
            for f in frames]
     pal[0].save(out, save_all=True, append_images=pal[1:], duration=durations, loop=0,
                 optimize=True, disposal=2)
