@@ -8,3 +8,7 @@ macos/build/
 *.zip
 
 __pycache__/
+
+# .NET build output
+windows/bin/
+windows/obj/

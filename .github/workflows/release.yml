@@ -26,6 +26,30 @@ jobs:
           files: TaskTrafficLight.zip
           generate_release_notes: true
 
+  windows:
+    name: Windows app
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish self-contained single file
+        run: >
+          dotnet publish windows/TaskTrafficLight.csproj -c Release -r win-x64
+          --self-contained true -p:PublishSingleFile=true
+          -p:EnableCompressionInSingleFile=true -p:DebugType=none -o out
+
+      - name: Package
+        run: Compress-Archive -Path out/TaskTrafficLight.exe -DestinationPath TaskTrafficLight-win-x64.zip
+
+      - name: Publish release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TaskTrafficLight-win-x64.zip
+
   npm:
     name: npm package
     runs-on: ubuntu-latest
@@ -43,10 +67,17 @@ jobs:
           node --check client.js
 
       - name: Publish
-        # Publishing is skipped until the repository has an NPM_TOKEN secret,
-        # so a release never goes red just because npm is not wired up yet.
+        # Skipped without an NPM_TOKEN, and idempotent: re-running a tag whose
+        # version is already on the registry is not a failure.
         if: env.NPM_TOKEN != ''
-        run: npm publish
+        run: |
+          name=$(node -p "require('./package.json').name")
+          version=$(node -p "require('./package.json').version")
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "$name@$version is already published; nothing to do."
+          else
+            npm publish
+          fi
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

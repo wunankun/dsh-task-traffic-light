@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 — 2026-11-25
+
+- Windows build: a native WinForms panel (`windows/`) reading the same
+  `state.json` and writing the same `focus.json`, so one plugin serves both
+  platforms. Self-contained single file, no .NET install needed.
+- On Windows the plugin page offers a download link instead of the macOS
+  installer, and the automatic app update stays off.
+
 ## 0.5.0 — 2026-11-25
 
 - An installed companion app now follows the plugin: on startup the plugin

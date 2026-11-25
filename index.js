@@ -43,6 +43,9 @@ const APP_VERSION = '1.2'
 const APP_NAME = 'TaskTrafficLight.app'
 /** Version-free asset name, so this URL keeps resolving after every release. */
 const APP_ZIP_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest/download/TaskTrafficLight.zip'
+/** Where Windows users pick up their build; the installer here is macOS-only. */
+const RELEASES_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest'
+const macOS = process.platform === 'darwin'
 
 /** State file layout version; the macOS app tolerates older and newer fields. */
 const STATE_VERSION = 5
@@ -137,6 +140,7 @@ async function installApp() {
  * @returns {() => void} cancels the pending check.
  */
 function scheduleAppUpdate(delayMs = 3_000) {
+  if (!macOS) return () => {}
   const timer = setTimeout(() => {
     const installed = installedAppVersion()
     if (installed === null || installed === APP_VERSION) return
@@ -557,10 +561,19 @@ export function apply(ctx, config) {
             return Response.json({ error: 'body is not JSON' }, { status: 400 })
           }
           if (body !== null && typeof body === 'object' && body.action === 'status') {
-            const version = installedAppVersion()
-            return Response.json({ installed: version !== null, version, latest: APP_VERSION })
+            const version = macOS ? installedAppVersion() : null
+            return Response.json({
+              installed: version !== null,
+              version,
+              latest: APP_VERSION,
+              supported: macOS,
+              url: RELEASES_URL,
+            })
           }
           if (body !== null && typeof body === 'object' && body.action === 'install') {
+            if (!macOS) {
+              return Response.json({ error: 'this installer is macOS only', url: RELEASES_URL }, { status: 501 })
+            }
             try {
               const version = await installApp()
               return Response.json({ installed: version !== null, version, latest: APP_VERSION })

@@ -36,6 +36,7 @@ window.__ModuleLoader__.load({
         installed: '小应用已安装',
         update: '更新小应用到',
         retry: '重试安装',
+        unsupported: '下载 Windows 版',
         unreachable: '连不上插件',
       }
       : {
@@ -45,6 +46,7 @@ window.__ModuleLoader__.load({
         installed: 'Lamp app installed',
         update: 'Update the lamp app to',
         retry: 'Retry install',
+        unsupported: 'Get the Windows build',
         unreachable: 'plugin unreachable',
       }
 
@@ -115,6 +117,11 @@ window.__ModuleLoader__.load({
           setState({ phase: 'error', message: result.error })
           return
         }
+        if (result.supported === false) {
+          // The installer is macOS-only; send Windows users to the release page.
+          setState({ phase: 'unsupported', url: result.url })
+          return
+        }
         if (result.installed !== true) {
           setState({ phase: 'missing', latest: result.latest })
           return
@@ -153,6 +160,14 @@ window.__ModuleLoader__.load({
         return h('span', { style: noteStyle },
           h('span', { style: dotStyle }),
           `${LABEL.installed} v${state.version ?? state.latest}`)
+      }
+
+      if (state.phase === 'unsupported') {
+        return h('button', {
+          type: 'button',
+          style: buttonStyle,
+          onClick: () => { window.open(state.url, '_blank', 'noopener') },
+        }, LABEL.unsupported)
       }
 
       if (state.phase === 'outdated') {
