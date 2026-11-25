@@ -2,6 +2,8 @@
 
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 用的 macOS 悬浮红绿灯。贴在屏幕边上，不用切窗口就知道几个 agent 在干嘛、哪个在等你。
 
+<img src="docs/demo.gif" width="452" alt="会话在跑时亮红灯，有东西等你时亮黄灯；绿灯一直亮到你打开那个会话。">
+
 [English](README.md) · [MIT](LICENSE)
 
 ## 三盏灯，三件事

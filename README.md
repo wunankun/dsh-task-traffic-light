@@ -2,6 +2,8 @@
 
 A floating traffic light for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) on macOS. It sits at the edge of your screen and tells you what your agents are doing — without switching windows to find out.
 
+<img src="docs/demo.gif" width="452" alt="The lamp lights as sessions run and wait; it stays green until you open the finished session.">
+
 [中文说明](README.zh.md) · [MIT](LICENSE)
 
 ## Three lamps, three facts
