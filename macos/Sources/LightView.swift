@@ -164,6 +164,34 @@ final class LightView: NSView {
         }
     }
 
+    /// Which lamp the startup sweep is lighting, or nil while the real state
+    /// owns the lamps. The sweep runs once per launch, so the panel announces
+    /// itself instead of appearing already dark.
+    private var bootLamp: Int? {
+        didSet {
+            updateLamps()
+            updateHousingBorder()
+            updateSpeedBadge()
+        }
+    }
+
+    /// Bumped on every launch so a stale sweep cannot overwrite a newer one.
+    private var sweepGeneration = 0
+
+    /// Light red, then amber, then green once, each for `stepDuration`, and
+    /// hand the lamps back to the real state at the end.
+    func playStartupSweep(stepDuration: TimeInterval = 0.35) {
+        sweepGeneration += 1
+        let generation = sweepGeneration
+        bootLamp = 0
+        for step in 1...3 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + stepDuration * Double(step)) { [weak self] in
+                guard let self, self.sweepGeneration == generation else { return }
+                self.bootLamp = step == 3 ? nil : step
+            }
+        }
+    }
+
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         wantsLayer = true
@@ -325,7 +353,9 @@ final class LightView: NSView {
         let lampTones: [(NSColor, NSColor)] = [
             (Self.red, redOff), (Self.amber, amberOff), (Self.green, greenOff),
         ]
-        let onStates = [runningCount > 0, waiting, completed]
+        // The startup sweep lights one lamp at a time, whatever the bridge says.
+        let onStates = bootLamp.map { lit in (0..<3).map { $0 == lit } }
+            ?? [runningCount > 0, waiting, completed]
 
         for (index, lamp) in lamps.enumerated() {
             let isOn = onStates[index]
@@ -355,7 +385,7 @@ final class LightView: NSView {
                 lamp.layer.shadowOpacity = index == 0 ? 1.0 : 0.9
                 lamp.layer.shadowRadius = index == 0 ? 16 : 9
                 lamp.layer.shadowOffset = .zero
-                let pulse: Double? = index == 0 ? 2.6 : index == 1 ? 0.65 : nil
+                let pulse: Double? = bootLamp == nil ? (index == 0 ? 2.6 : index == 1 ? 0.65 : nil) : nil
                 if let pulse {
                     let animation = CABasicAnimation(keyPath: "opacity")
                     // Keep the dip clearly above the unlit colour: the old
@@ -381,6 +411,12 @@ final class LightView: NSView {
     /// Light the housing border for the strongest non-red state: waiting wins
     /// over a finished run, because it is the one that needs the human.
     private func updateHousingBorder() {
+        if bootLamp != nil {
+            // The sweep keeps the border quiet until the real state returns.
+            housing.borderWidth = 1
+            housing.borderColor = NSColor(white: 1, alpha: 0.14).cgColor
+            return
+        }
         if waiting {
             applyBorderGlow(color: Self.amber)
         } else if completed {
@@ -398,7 +434,7 @@ final class LightView: NSView {
 
 
     private func updateSpeedBadge() {
-        guard showsSpeed, runningCount > 0, let tokensPerSecond else {
+        guard bootLamp == nil, showsSpeed, runningCount > 0, let tokensPerSecond else {
             speedBadge.isHidden = true
             speedText.isHidden = true
             return

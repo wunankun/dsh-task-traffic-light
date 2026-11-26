@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.5 — 2026-11-26
+
+- The panel announces itself on every launch: red, then amber, then green
+  light in turn, 0.35 s each, and the lamps settle on the real state right
+  after the third. Companion app 1.6.
+
 ## 0.10.4 — 2026-11-26
 
 - Uninstalling the plugin now takes the companion app with it: the plugin's

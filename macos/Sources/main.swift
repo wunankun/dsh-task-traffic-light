@@ -77,6 +77,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         panel.contentView = lightView
         panel.orderFrontRegardless()
+        // Announce the panel with one red → amber → green sweep, then settle
+        // on the real state.
+        lightView.playStartupSweep()
     }
 
     private func buildStatusItem() {
