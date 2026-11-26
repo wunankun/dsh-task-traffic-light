@@ -126,7 +126,6 @@ final class LightView: NSView {
             guard oldValue != runningCount else { return }
             updateLamps()
             updateSpeedBadge()
-            window?.invalidateCursorRects(for: self)
         }
     }
 
@@ -136,7 +135,6 @@ final class LightView: NSView {
             guard oldValue != waiting else { return }
             updateLamps()
             updateHousingBorder()
-            window?.invalidateCursorRects(for: self)
         }
     }
 
@@ -147,7 +145,6 @@ final class LightView: NSView {
             guard oldValue != completed else { return }
             updateLamps()
             updateHousingBorder()
-            window?.invalidateCursorRects(for: self)
         }
     }
 
@@ -167,8 +164,6 @@ final class LightView: NSView {
     /// Which lamp the startup sweep is lighting, or nil while the real state
     /// owns the lamps. The sweep runs once per launch, so the panel announces
     /// itself instead of appearing already dark.
-    private var hoverTracking: NSTrackingArea?
-
     private var bootLamp: Int? {
         didSet {
             updateLamps()
@@ -322,49 +317,6 @@ final class LightView: NSView {
         dragStartOrigin = nil
         pressPoint = nil
         dragged = false
-    }
-
-    /// Every lamp with something to open shows a pointing hand.
-    override func resetCursorRects() {
-        super.resetCursorRects()
-        if runningCount > 0 { addCursorRect(redLampFrame(), cursor: .pointingHand) }
-        if waiting { addCursorRect(amberLampFrame(), cursor: .pointingHand) }
-        if completed { addCursorRect(greenLampFrame(), cursor: .pointingHand) }
-    }
-
-    // A floating, non-activating panel does not always install cursor rects, so
-    // the hand is driven by a tracking area as well: whichever path runs first
-    // sets the same cursor.
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        if let hoverTracking { removeTrackingArea(hoverTracking) }
-        let area = NSTrackingArea(
-            rect: .zero,
-            options: [.mouseMoved, .mouseEnteredAndExited, .cursorUpdate, .activeAlways, .inVisibleRect],
-            owner: self,
-            userInfo: nil
-        )
-        addTrackingArea(area)
-        hoverTracking = area
-    }
-
-    override func mouseMoved(with event: NSEvent) {
-        applyHoverCursor(at: convert(event.locationInWindow, from: nil))
-    }
-
-    override func cursorUpdate(with event: NSEvent) {
-        applyHoverCursor(at: convert(event.locationInWindow, from: nil))
-    }
-
-    override func mouseExited(with event: NSEvent) {
-        NSCursor.arrow.set()
-    }
-
-    private func applyHoverCursor(at point: CGPoint) {
-        let hitRed = runningCount > 0 && redLampFrame().insetBy(dx: -5, dy: -5).contains(point)
-        let hitAmber = waiting && amberLampFrame().insetBy(dx: -5, dy: -5).contains(point)
-        let hitGreen = completed && greenLampFrame().insetBy(dx: -5, dy: -5).contains(point)
-        (hitRed || hitAmber || hitGreen ? NSCursor.pointingHand : NSCursor.arrow).set()
     }
 
     private func redLampFrame() -> CGRect {

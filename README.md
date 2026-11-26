@@ -7,7 +7,7 @@
 [![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
 
-给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 用的 macOS 悬浮红绿灯。贴在屏幕边上，不用切窗口就知道几个 agent 在干嘛、哪个在等你。
+运行在 macOS 边缘的一个小红绿灯：不用切回 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)，也能知道每个任务是在跑、在等你，还是已经跑完；点一下亮着的那盏灯，就回到对应会话。
 
 <img src="docs/demo.gif" width="452" alt="会话在跑时亮红灯，有东西等你时亮黄灯；绿灯一直亮到你打开那个会话。">
 
@@ -21,7 +21,7 @@
 | 🟡 黄灯 | 有会话在等你批准或回答 | 把 DSH 带到最前，切到**第一个**在等的会话 |
 | 🟢 绿灯 | 有会话跑完了，DSH 里那颗未读绿点还没消 | 把 DSH 带到最前，切到**最早完成**的那个 |
 
-三盏灯互相独立，红灯和绿灯可以同时亮。任何一盏此刻可点的灯，鼠标移上去都会变成小手。
+三盏灯互相独立，红灯和绿灯可以同时亮。
 
 面板顶上的速率条是可选件：点菜单栏图标，用「隐藏速率显示 / 开启速率显示」开关它，选择会被记住。同一菜单里还有「隐藏红绿灯」和「退出」。
 

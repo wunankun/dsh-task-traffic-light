@@ -7,7 +7,7 @@
 [![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
 
-macOS 版 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 用の浮かぶ信号機です。画面の端に置いておけば、ウィンドウを切り替えなくても、エージェントが今なにをしているか・どれが自分の返事を待っているかが分かります。
+macOS デスクトップの端に浮かぶ小さな信号機。[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) に戻らなくても、各タスクが実行中・返事待ち・完了のどれかが分かり、点いているランプをクリックすればそのセッションへ移動できます。
 
 <img src="docs/demo.gif" width="452" alt="セッションが動いている間は赤、待っている間は黄、終わったセッションを開くまで緑が点きます。">
 
@@ -21,7 +21,7 @@ macOS 版 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) �
 | 🟡 黄 | 承認または回答を待っているセッションがある | DSH を前面に出し、**最初に**待っているセッションを開く |
 | 🟢 緑 | 終わったセッションの未読ドットが DSH に残っている | DSH を前面に出し、**最も古い**未読セッションを開く |
 
-三つの灯は独立していて、赤と緑が同時に点くこともあります。そのとき操作できる灯はどれも、ポインタを乗せると指の形になります。
+三つの灯は独立していて、赤と緑が同時に点くこともあります。
 
 ## インストール
 

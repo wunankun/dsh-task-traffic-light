@@ -59,7 +59,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         panel.level = .floating
         panel.hidesOnDeactivate = false
         panel.isMovableByWindowBackground = false
-        panel.acceptsMouseMovedEvents = true
+        panel.acceptsMouseMovedEvents = false
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
         panel.delegate = self
 

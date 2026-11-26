@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.5 — 2026-11-26
+
+- The lamps no longer change the pointer: the hand cursor is gone, clicking a
+  lit lamp still jumps to its session.
+- One-line description reworded in every README: outside DeepSeek Harness you
+  still see whether each task runs, waits or is done, and one click returns to
+  that session. Companion app 1.0.5.
+
 ## 1.0.4 — 2026-11-26
 
 - The plugin-page install button downloads the release with `curl` instead of

@@ -7,7 +7,7 @@
 [![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
 
-Un semáforo flotante para [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) en macOS. Vive en el borde de la pantalla y te dice qué están haciendo tus agentes, sin cambiar de ventana para averiguarlo.
+Un pequeño semáforo flotante en el borde de tu escritorio de macOS: mira si cada tarea sigue en marcha, te espera o ya terminó sin volver a [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), y pulsa una luz encendida para ir a esa sesión.
 
 <img src="docs/demo.gif" width="452" alt="La luz se enciende mientras las sesiones trabajan o esperan; la verde sigue encendida hasta que abres la sesión terminada.">
 
@@ -21,7 +21,7 @@ Un semáforo flotante para [DeepSeek Harness](https://github.com/deepseek-ai/dee
 | 🟡 amarilla | una sesión espera tu aprobación o tu respuesta | trae DSH al frente y abre la **primera** sesión en espera |
 | 🟢 verde | una sesión terminada todavía muestra su punto de no leída en DSH | trae DSH al frente y abre la **más antigua** sin leer |
 
-Las luces son independientes: la roja y la verde pueden estar encendidas a la vez. Toda luz que puede hacer algo muestra una mano al pasar el ratón.
+Las luces son independientes: la roja y la verde pueden estar encendidas a la vez.
 
 ## Instalación
 
