@@ -1,4 +1,10 @@
+<div align="center">
+
+<img src="assets/icon-180.png" width="96" alt="DSH 작업 신호등">
+
 # DSH 작업 신호등
+
+**macOS에서 동작하는 신호등. DeepSeek Harness로 돌아가지 않아도 각 작업이 실행 중인지, 기다리는지, 끝났는지 알 수 있고, 켜진 램프를 클릭하면 해당 세션으로 이동합니다.**
 
 [![npm](https://img.shields.io/npm/v/dsh-task-traffic-light?label=npm)](https://www.npmjs.com/package/dsh-task-traffic-light)
 [![downloads](https://img.shields.io/npm/dm/dsh-task-traffic-light?label=downloads)](https://www.npmjs.com/package/dsh-task-traffic-light)
@@ -7,102 +13,152 @@
 [![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
 
-macOS에서 동작하는 신호등. [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)로 돌아가지 않아도 각 작업이 실행 중인지, 기다리는지, 끝났는지 알 수 있고, 켜진 램프를 클릭하면 해당 세션으로 이동합니다.
+[⬇️ 설치](#설치) · [🖼 스크린샷](#스크린샷) · [🔒 개인정보 보호](#개인정보-보호와-보안) · [⭐ 스타 주기](https://github.com/wunankun/dsh-task-traffic-light)
 
-<img src="docs/demo.gif" width="452" alt="세션이 돌아가는 동안은 빨강, 기다리는 동안은 노랑, 끝난 세션을 열기 전까지 초록이 켜집니다.">
+<sub>[简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [日本語](README.ja.md) · **한국어** · [MIT](LICENSE)</sub>
 
-[简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [日本語](README.ja.md) · **한국어** · [MIT](LICENSE)
+</div>
 
-## 세 개의 등, 세 가지 사실
+<div align="center">
+<img src="docs/demo.gif" width="452" alt="네 가지 상태: 대기, 세션 실행 중, 응답 대기, 완료했지만 안읽음.">
+</div>
 
-| 등 | 켜지는 조건 | 누르면 |
-|---|---|---|
-| 🔴 | **빨강**: 최상위 세션이 하나 이상 실행 중 | DSH를 앞으로 가져오고 **다음** 실행 중 세션을 엽니다 (누를 때마다 다음으로) |
-| 🟡 | **노랑**: 승인이나 답변을 기다리는 세션이 있음 | DSH를 앞으로 가져오고 **가장 먼저** 기다리는 세션을 엽니다 |
-| 🟢 | **초록**: 끝난 세션의 미확인 점이 DSH에 아직 남아 있음 | DSH를 앞으로 가져오고 **가장 오래된** 미확인 세션을 엽니다 |
+실행 중인지, 내 응답을 기다리는지, 끝났는데 아직 안 봤는지 — 원래는 매번 DSH로 돌아가서 확인해야 했습니다. 이제는 화면 가장자리만 봐도 되고, 클릭 한 번이면 그 자리로 갑니다.
 
-세 등은 서로 독립적이라 빨강과 초록이 동시에 켜질 수 있습니다. 꺼진 등이나 패널 가장자리의 빈 곳을 클릭하면 세션은 바꾸지 않고 DSH만 앞으로 가져옵니다.
+---
+
+## 세 개의 램프, 세 가지 일
+
+| 램프 | 켜지는 때 | 클릭하면 |
+| :--: | --- | --- |
+| 🔴 | **빨강** · 최상위 세션이 하나 이상 실행 중 | DSH를 앞으로 가져오고 **다음** 실행 중 세션을 엽니다 (누를 때마다 순환) |
+| 🟡 | **노랑** · 승인이나 응답을 기다리는 세션이 있음 | DSH를 앞으로 가져오고 **첫 번째** 대기 세션을 엽니다 |
+| 🟢 | **초록** · 세션이 끝났고 DSH의 안읽음 점이 아직 남아 있음 | DSH를 앞으로 가져오고 **가장 먼저 끝난** 세션을 엽니다 |
+
+램프는 서로 독립적이라 실행 중과 대기가 겹치면 빨강과 노랑이 동시에 켜집니다.
+
+매일 체감되는 작은 규칙들:
+
+- **꺼진 램프**나 패널의 빈 가장자리를 클릭하면 세션은 바꾸지 않고 DSH만 앞으로 가져옵니다.
+- **속도 막대는 선택 사항**: 메뉴 막대 아이콘 → *속도 숨기기* / *표시하기*, 설정은 기억됩니다.
+- **시작할 때** 세 램프가 차례로 켜졌다가 실제 상태로 돌아옵니다.
+- **서브에이전트는 램프를 켜지 않습니다**: DSH 목록에 행이 없고 열 수도 없기 때문입니다.
+- **원하는 곳으로 드래그**하면 다음에도 그 자리에 있습니다.
 
 ## 설치
 
-**1 — 플러그인** (DSH 안에서):
+세 단계, 2분. DSH 0.2.1 이상이 필요합니다.
+
+### 1 · 플러그인
+
+DSH 안에서:
 
 ```sh
 dsh plugin add dsh-task-traffic-light
 ```
 
-앱의 플러그인 마켓에서 설치해도 됩니다. 대개 설치 후 페이지를 한 번 새로 고쳐야 합니다.
+플러그인 마켓이나 플러그인 페이지에서 설치해도 됩니다. 설치 후 페이지를 한 번 새로 고치세요.
 
-**2 — 앱:**
+### 2 · 앱
 
-가장 간단한 방법: DSH에서 **플러그인 → 이 플러그인**을 열고 **Install the lamp app**을 누르세요. 플러그인이 배포판을 내려받아 `/Applications`에 풀고, 격리 속성을 지운 뒤 실행합니다. 이후 이 버튼은 앱 상태를 따라갑니다. 실행 중이면 **Running**, 종료하면 **Start**, 새 버전이 있으면 버튼 아래에 작은 글씨로 **Update available v1.0.3**. 버튼 문구는 영어와 중국어만 지원합니다.
+가장 쉬운 방법은 **플러그인 → 이 플러그인** 오른쪽 위의 **신호등 앱 설치**. 누르면 릴리스를 내려받아 `/Applications`에 풀고 격리 표시를 지운 뒤 실행합니다.
 
-터미널에서 설치할 수도 있습니다:
+이후 버튼은 앱 상태를 따릅니다: 실행 중이면 *실행 중*, 꺼져 있으면 *열기*, 새 버전이 있으면 버튼 아래에 작은 *v1.0.7로 업데이트*.
+
+터미널을 선호한다면:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wunankun/dsh-task-traffic-light/main/scripts/install-app.sh | sh
 ```
 
-스크립트가 `TaskTrafficLight.app`을 `/Applications`에 넣고 실행합니다. 직접 해도 됩니다. [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest)에서 `TaskTrafficLight.zip`을 내려받아 압축을 풀고 응용 프로그램 폴더로 끌어다 놓은 뒤, 처음 한 번만 우클릭 → 열기 (ad-hoc 서명이라 공증은 받지 않았습니다).
+수동 설치도 가능: [Releases](https://github.com/wunankun/dsh-task-traffic-light/releases/latest)에서 `TaskTrafficLight.zip`을 받아 응용 프로그램 폴더에 넣고, 처음 한 번만 우클릭 → 열기 (ad-hoc 서명, 공증 없음).
 
-**3 — 끝.** DSH를 다시 시작하고 페이지를 새로 고친 뒤 신호등을 원하는 자리에 두세요. 드래그로 옮길 수 있고 위치는 기억됩니다.
+### 3 · 연결하기
 
-**업데이트.** 갱신할 것은 하나뿐입니다 — 플러그인. 앱을 한 번 설치해 두면 다음 시작 때 플러그인이 가진 버전으로 교체됩니다. 설치되지 않은 앱을 임의로 깔지는 않습니다. 그 단계는 항상 클릭이 필요합니다.
+DSH를 재시작하고 페이지를 새로 고친 뒤, 패널을 원하는 곳으로 옮기세요.
 
-## 초록 등이 따르는 것은 DSH의 상태이지 타임스탬프가 아닙니다
+**업데이트에 대해**: 갱신할 것은 플러그인 하나뿐입니다. 앱은 한 번 설치되면 다음 실행 때 플러그인에 포함된 버전으로 스스로 교체됩니다.
 
-DSH는 이미 "보고 있지 않던 사이에 끝난" 세션 앞에 작은 초록 점을 붙입니다. 이 앱이 그리는 것은 바로 그 점입니다.
+## 스크린샷
 
-- 그 점이 붙은 세션이 하나라도 있으면 등이 켜져 있습니다.
-- 그 세션을 열면 (등을 눌러서든 다른 방식으로든) 점이 사라지고, 등도 1초 안에 따라 꺼집니다.
-- 마지막 점이 사라져야 초록 등이 꺼집니다.
+<table>
+<tr>
+<td align="center" width="33%"><img src="assets/screenshot-1.png" width="250" alt="실행 중 — 빨강"><br><sub>실행 중 · 빨강</sub></td>
+<td align="center" width="33%"><img src="assets/screenshot-2.png" width="250" alt="응답 대기 — 노랑"><br><sub>응답 대기 · 노랑</sub></td>
+<td align="center" width="33%"><img src="assets/screenshot-3.png" width="250" alt="완료·안읽음 — 초록"><br><sub>완료·안읽음 · 초록</sub></td>
+</tr>
+</table>
 
-읽지 않은 세션이 여러 개면 누를 때마다 가장 오래된 것이 열려 확인 처리되므로, 두 번 누르면 작은 대기열을 차례로 정리하게 됩니다.
+## 개인정보 보호와 보안
 
-DSH가 스스로 표시하지 않는 경우도 여기서 잡습니다. **DSH 창이 앞에 없을 때**(다른 앱이 앞에 있거나 탭이 가려진 경우) 선택된 세션이 끝나면 미확인으로 보고 등을 켭니다. DSH는 '메인 뷰인지'만 판단하고 창이 보이는지는 모릅니다. 창으로 돌아오면 이 알림은 지워집니다.
+**네트워크 없이도 동작합니다.** 플러그인과 앱은 Mac 안의 JSON 파일 하나로만 대화합니다. 서버도, 계정도, 클라우드도 없습니다.
+
+| | 내용 |
+| --- | --- |
+| **읽는 것** | DSH의 최상위 세션 상태(실행 중 / 대기 / 완료·안읽음)뿐입니다. 대화 내용, 파일, 클립보드, 키 입력은 읽지 않습니다. |
+| **쓰는 것** | `~/.dsh/task-traffic-light/state.json`(개수·세션 id·속도)과 클릭 시 `focus.json`. 앱은 위치와 설정만 `local.tasktrafficlight`에 저장합니다. |
+| **통신** | 평소에는 **요청 0건**. *앱 설치 / 업데이트*를 누를 때만 GitHub Releases에서 zip을 받습니다. |
+| **하지 않는 것** | 분석, 전송, 포트 개방, 업로드, 원격 로그 — 전부 없습니다. |
+
+- 코드는 모두 이 저장소에 있습니다: 플러그인 약 1,200줄 JavaScript, 앱 약 740줄 Swift. 난독화도 압축도, 미리 빌드된 서드파티 바이너리도 없습니다.
+- 직접 확인하세요: 외부 주소는 `index.js`의 `APP_ZIP_URL` 하나뿐입니다.
+- 플러그인을 제거하면 앱과 설정, 상태 파일도 함께 삭제됩니다.
 
 ## 동작 방식
 
 ```
-DSH Host 플러그인 ──쓰기──> ~/.dsh/task-traffic-light/state.json <──읽기── TaskTrafficLight.app
-        ▲                                                                        │
-        └────── /api/task-light/focus (인증·동일 출처) ◀── focus.json ───────────┘
+DSH 호스트 플러그인 ──쓰기──> ~/.dsh/task-traffic-light/state.json <──읽기── TaskTrafficLight.app
+        ▲                                                                     │
+        └────── /api/task-light/focus (인증·동일 출처) ◀── focus.json ──────────┘
 ```
 
-- 플러그인이 스냅숏을 씁니다: 실행 중인 수, 대기 중인 상호작용, 기다리는 세션 id, 미확인 세션 id, 토큰 속도.
-- 앱이 그 파일을 주기적으로 읽어 등을 그립니다.
-- 누르면 `focus.json`이 기록되고, 플러그인은 "누른 등"에 비추어 대상을 검증한 뒤 DSH 자체의 로컬 인증 채널로 웹 UI에 넘깁니다. 페이지가 세션을 열고 요청에 응답합니다.
-- 서브에이전트 세션은 걸러집니다. 목록에 줄이 없어 열어도 지울 수 없으므로, 등을 켜 둔 채로 남을 수 없게 했습니다.
+1. 플러그인은 0.5초마다 스냅숏을 씁니다: 실행 수, 대기 중 상호작용, 대기 세션 id, 완료·안읽음 id, 속도.
+2. 앱은 그 파일을 읽어 램프를 그리므로 DSH가 멈추면 스스로 어두워집니다.
+3. 클릭하면 앱이 `focus.json`을 쓰고, 플러그인이 해당 세션이 아직 그 램프인지 확인한 뒤 DSH의 로컬 인증 경로로 프런트엔드에 넘깁니다.
+4. 30초 안에 확인되지 않은 클릭은 조용히 만료됩니다.
 
-## 개인정보
+<details>
+<summary><b>초록 램프가 DSH의 안읽음 점을 따르는 이유</b></summary>
 
-여는 포트는 없습니다. 플러그인은 `~/.dsh/task-traffic-light/` 아래 JSON 하나를 쓰고, 앱은 등을 누를 때 하나 더 씁니다. 그 밖에 스스로 밖으로 나가는 데이터는 없습니다.
+DSH는 보지 않는 동안 끝난 세션에 초록 점을 붙입니다. 램프는 그 점의 거울입니다. 마지막 점이 사라질 때까지 켜져 있고, 클릭할 때마다 가장 먼저 끝난 세션을 엽니다. **DSH 창이 앞에 없을 때** 끝난 경우도 안읽음으로 처리합니다.
 
-유일한 예외는 플러그인 상세 페이지의 설치 버튼입니다. 누를 때만 GitHub에서 배포판을 내려받고, 운영체제의 `ditto`, `xattr`, `open`으로 앱을 설치합니다. 그 외에는 동작하지 않으며, 플러그인을 지우면 버튼도 사라집니다. 플러그인을 지우면 설치된 앱과 `local.tasktrafficlight` 설정도 십여 초 뒤에 함께 삭제되어 `/Applications`에 아무것도 남지 않습니다. 전체가 JavaScript 약 600줄, Swift 약 500줄이라 한 번에 읽어 볼 수 있습니다.
+</details>
 
-## 요구 사항
+<details>
+<summary><b>요구 사항과 문제 해결</b></summary>
 
-- macOS 13 이상, Apple 실리콘 또는 Intel (배포판은 유니버설)
-- DeepSeek Harness 0.2.1 이상, 플러그인을 추가할 수 있는 프로필
+- macOS 13 이상, Apple Silicon / Intel 모두 가능 (릴리스는 universal).
+- DSH 0.2.1 이상, 프로필에 플러그인을 추가할 수 있어야 함.
 
-앱 자체 메뉴는 아직 중국어입니다. 번역 PR은 언제나 환영합니다.
+**램프가 모두 꺼져 있음.** `state.json`이 10초 동안 갱신되지 않으면 DSH가 실행 중이 아니라고 판단합니다. `dsh plugin list`와 `tail -f ~/.dsh/task-traffic-light/state.json`을 확인하세요.
 
-## 문제가 생기면
+**클릭해도 반응이 없음.** 클릭은 DSH 페이지가 실행하므로 플러그인의 클라이언트 절반이 로드되어 있어야 합니다. 설치 후 한 번 새로 고치세요. 30초를 넘긴 클릭은 만료됩니다.
 
-**세 등이 모두 꺼져 있다.** 10초 안에 `state.json`이 갱신되지 않으면 "DSH가 실행 중이 아님"으로 봅니다. 플러그인이 켜져 있는지 확인하고(`dsh plugin list`), `tail -f ~/.dsh/task-traffic-light/state.json`으로 갱신을 지켜보세요.
+</details>
 
-**눌러도 반응이 없다.** 클릭을 실행하는 쪽은 DSH 페이지이므로, 플러그인의 클라이언트 절반이 로드된 페이지가 필요합니다. 설치 후 페이지를 한 번 새로 고치세요. 30초가 지난 요청은 조용히 만료됩니다.
-
-**등은 켜져 있는데 아무 일도 없어 보인다.** 이 플러그인은 최상위 세션만 셉니다. 서브에이전트가 단독으로 등을 켜지는 않습니다.
-
-## 소스에서 빌드
+<details>
+<summary><b>소스에서 빌드</b></summary>
 
 ```sh
 git clone https://github.com/wunankun/dsh-task-traffic-light
 cd dsh-task-traffic-light
-./macos/build.sh          # 유니버설 바이너리, Xcode 명령줄 도구가 필요합니다
+./macos/build.sh          # universal 빌드, Xcode 명령 줄 도구 필요
 open macos/TaskTrafficLight.app
 ```
+
+</details>
+
+## 도움이 되었다면
+
+<div align="center">
+
+후원도 광고도 없습니다. 창 전환이 조금이라도 줄었다면,
+
+[**프로젝트에 스타를 ⭐**](https://github.com/wunankun/dsh-task-traffic-light)
+
+긴 DSH 세션을 돌리는 더 많은 사람에게 닿을 수 있습니다.
+
+</div>
 
 ## 라이선스
 
