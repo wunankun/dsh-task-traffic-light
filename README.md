@@ -82,6 +82,8 @@ DSH Host 插件 ──写──> ~/.dsh/task-traffic-light/state.json <──读
 
 唯一的例外是插件页上那个安装按钮：按下时才会去 GitHub 下载发布包，并调用系统自带的 `ditto`、`xattr`、`open` 把应用装好。不点就不会发生，卸载插件这个按钮也跟着消失。
 
+卸载插件时，已经装进 `/Applications` 的小应用会连同 `local.tasktrafficlight` 偏好和状态文件一起被删掉——插件先走完自己的卸载，十几秒后小应用自己消失，不用再去 Applications 里手动拖。
+
 ## 环境要求
 
 - macOS 13 或更新（Apple 芯片或 Intel，发布包是 universal）

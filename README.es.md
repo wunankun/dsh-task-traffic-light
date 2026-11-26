@@ -78,7 +78,7 @@ DSH Host plugin ──escribe──> ~/.dsh/task-traffic-light/state.json <─�
 
 Sin puerto abierto. El plugin escribe un JSON en `~/.dsh/task-traffic-light/`; la aplicación escribe otro cuando pulsas una luz. Nada sale de la máquina por sí solo.
 
-La única excepción es el botón de instalación de la página del plugin: al pulsarlo descarga el archivo de la versión desde GitHub y ejecuta `ditto`, `xattr` y `open` del sistema para colocar la aplicación. No se ejecuta de otro modo, y desinstalar el plugin elimina ese botón. En total son unas 600 líneas de JavaScript y 500 de Swift: se puede leer entero en una sentada.
+La única excepción es el botón de instalación de la página del plugin: al pulsarlo descarga el archivo de la versión desde GitHub y ejecuta `ditto`, `xattr` y `open` del sistema para colocar la aplicación. No se ejecuta de otro modo, y desinstalar el plugin elimina ese botón. Desinstalarlo también borra la aplicación instalada y sus preferencias `local.tasktrafficlight` unos segundos después, sin dejar nada en `/Applications`. En total son unas 600 líneas de JavaScript y 500 de Swift: se puede leer entero en una sentada.
 
 ## Requisitos
 

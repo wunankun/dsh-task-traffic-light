@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.4 — 2026-11-26
+
+- Uninstalling the plugin now takes the companion app with it: the plugin's
+  dispose run starts a detached check that waits for the dependency to leave
+  the profile, then quits the app, removes it from /Applications (or
+  ~/Applications), deletes its preferences domain and the state folder. A
+  reload or a plain disable leaves the app alone, and the check stands down
+  the moment any profile still lists the bundle.
+- No companion app change; still 1.5.
+
 ## 0.10.3 — 2026-11-26
 
 - The panel is 22 points shorter while the speed badge is hidden, and the

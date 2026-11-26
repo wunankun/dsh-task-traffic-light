@@ -14,9 +14,9 @@
  * elsewhere, not opened since"), so the lamp only goes out once the user has
  * opened every such Session and DSH has cleared its own dot.
  */
-import { execFile } from 'node:child_process'
+import { execFile, spawn } from 'node:child_process'
 import {
-  accessSync, constants, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync,
+  accessSync, constants, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync,
 } from 'node:fs'
 import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -178,6 +178,100 @@ function scheduleAppUpdate(delayMs = 3_000) {
   }, delayMs)
   if (typeof timer.unref === 'function') timer.unref()
   return () => clearTimeout(timer)
+}
+
+/** The plugin's own name, as it is listed in a profile manifest. */
+const PACKAGE_NAME = 'dsh-task-traffic-light'
+/** Every profile that names this plugin shares the one companion app. */
+const PROFILES_DIR = join(homedir(), '.dsh', 'profiles')
+/** The companion app's preferences domain, cleared together with its bundle. */
+const APP_DEFAULTS_DOMAIN = 'local.tasktrafficlight'
+
+/**
+ * Shell script that removes the companion app once no profile names this
+ * plugin any more. DSH has no uninstall hook: removing a bundle first
+ * deselects it and reloads (which disposes this plugin), then removes the
+ * dependency. So the check starts just after the dispose, keeps polling for
+ * the dependency to disappear, and exits untouched when any profile — the
+ * current one after a reload, or another one all along — still wants it.
+ */
+const UNINSTALL_CHECK = `
+still_wanted() {
+  for manifest in "$LIGHT_PROFILE_ROOT"/*/package.json; do
+    [ -f "$manifest" ] || continue
+    grep -q "$LIGHT_PACKAGE" "$manifest" && return 0
+  done
+  return 1
+}
+attempt=0
+misses=0
+while [ "$attempt" -lt 12 ]; do
+  sleep 5
+  if still_wanted; then misses=0; else misses=$((misses + 1)); fi
+  [ "$misses" -ge 2 ] && break
+  attempt=$((attempt + 1))
+done
+[ "$misses" -ge 2 ] || exit 0
+pkill -f "TaskTrafficLight.app/Contents/MacOS/TaskTrafficLight" 2>/dev/null
+sleep 1
+rm -rf "$LIGHT_APP_PATH" "$LIGHT_USER_APP_PATH"
+defaults delete "$LIGHT_DEFAULTS_DOMAIN" 2>/dev/null
+rm -f "$HOME/Library/Preferences/$LIGHT_DEFAULTS_DOMAIN.plist"
+rm -rf "$LIGHT_STATE_DIR"
+exit 0
+`
+
+/**
+ * Whether any profile still selects this bundle. A reload or a shutdown keeps
+ * it selected; an uninstall deselects it before the dependency is removed, and
+ * a plain disable deselects it while keeping the dependency.
+ * @returns {boolean} true while some profile lists the bundle.
+ */
+function selectedInSomeProfile() {
+  let profiles
+  try {
+    profiles = readdirSync(PROFILES_DIR)
+  } catch (error) {
+    // An unreadable profile root is not evidence of an uninstall.
+    return true
+  }
+  for (const name of profiles) {
+    try {
+      const manifest = JSON.parse(readFileSync(join(PROFILES_DIR, name, 'package.json'), 'utf8'))
+      const bundles = manifest?.dsh?.profile?.bundles
+      if (Array.isArray(bundles) && bundles.includes(PACKAGE_NAME)) return true
+    } catch (error) {
+      // A profile without a readable manifest cannot want the app.
+    }
+  }
+  return false
+}
+
+/**
+ * Hand the companion app's removal to a detached process, so it can outlive
+ * both this plugin and the DSH process that uninstalled it. A reload keeps the
+ * bundle selected and spawns nothing.
+ */
+function scheduleUninstallCleanup() {
+  if (!macOS || selectedInSomeProfile()) return
+  try {
+    const child = spawn('/bin/sh', ['-c', UNINSTALL_CHECK], {
+      detached: true,
+      stdio: 'ignore',
+      env: {
+        ...process.env,
+        LIGHT_PACKAGE: PACKAGE_NAME,
+        LIGHT_PROFILE_ROOT: PROFILES_DIR,
+        LIGHT_APP_PATH: join('/Applications', APP_NAME),
+        LIGHT_USER_APP_PATH: join(homedir(), 'Applications', APP_NAME),
+        LIGHT_DEFAULTS_DOMAIN: APP_DEFAULTS_DOMAIN,
+        LIGHT_STATE_DIR: STATE_DIR,
+      },
+    })
+    child.unref()
+  } catch (error) {
+    // Without a shell the app simply stays installed; the plugin is gone anyway.
+  }
 }
 
 /**
@@ -689,6 +783,7 @@ export function apply(ctx, config) {
     return () => {
       clearInterval(ticker)
       cancelAppUpdate()
+      scheduleUninstallCleanup()
       try {
         mkdirSync(STATE_DIR, { recursive: true })
         const temporary = STATE_FILE + '.tmp'
