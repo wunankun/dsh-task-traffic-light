@@ -17,9 +17,9 @@ Un semáforo que corre en macOS: mira si cada tarea sigue en marcha, te espera o
 
 | Luz | Encendida mientras | Al pulsarla |
 |---|---|---|
-| 🔴&nbsp;roja | al menos una sesión de primer nivel se está ejecutando | trae DSH al frente y abre la **siguiente** sesión en ejecución (cada clic pasa a otra) |
-| 🟡&nbsp;amarilla | una sesión espera tu aprobación o tu respuesta | trae DSH al frente y abre la **primera** sesión en espera |
-| 🟢&nbsp;verde | una sesión terminada todavía muestra su punto de no leída en DSH | trae DSH al frente y abre la **más antigua** sin leer |
+| 🔴 | **roja**: al menos una sesión de primer nivel se está ejecutando | trae DSH al frente y abre la **siguiente** sesión en ejecución (cada clic pasa a otra) |
+| 🟡 | **amarilla**: una sesión espera tu aprobación o tu respuesta | trae DSH al frente y abre la **primera** sesión en espera |
+| 🟢 | **verde**: una sesión terminada todavía muestra su punto de no leída en DSH | trae DSH al frente y abre la **más antigua** sin leer |
 
 Las luces son independientes: la roja y la verde pueden estar encendidas a la vez. Si pulsas una luz apagada o el borde vacío del panel, solo traes DSH al frente sin cambiar de sesión.
 
