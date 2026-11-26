@@ -17,9 +17,9 @@ A traffic light that runs on macOS: see whether each task is running, waiting fo
 
 | Lamp | Lit while | Click it and it |
 |---|---|---|
-| 🔴 red | at least one top-level session is running | brings DSH forward and opens the **next** running session (each click moves on) |
-| 🟡 yellow | a session waits for your approval or answer | brings DSH forward and opens the **first** waiting session |
-| 🟢 green | a finished session still shows its unread dot in DSH | brings DSH forward and opens the **oldest** unread session |
+| 🔴&nbsp;red | at least one top-level session is running | brings DSH forward and opens the **next** running session (each click moves on) |
+| 🟡&nbsp;yellow | a session waits for your approval or answer | brings DSH forward and opens the **first** waiting session |
+| 🟢&nbsp;green | a finished session still shows its unread dot in DSH | brings DSH forward and opens the **oldest** unread session |
 
 The lamps are independent: a red and a green lamp can be lit at the same time. Clicking a dark lamp, or the empty edge of the panel, just brings DSH forward without switching sessions.
 
