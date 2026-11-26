@@ -40,7 +40,7 @@ const SPEED_WINDOW_MS = 2_500
 /** The shortest span a fresh stream is averaged over, so the first second is not inflated. */
 const MIN_SPAN_MS = 700
 /** The companion app this plugin is half of; its version tracks the macOS release. */
-const APP_VERSION = '1.0.6'
+const APP_VERSION = '1.0.7'
 const APP_NAME = 'TaskTrafficLight.app'
 /** Version-free asset name, so this URL keeps resolving after every release. */
 const APP_ZIP_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest/download/TaskTrafficLight.zip'

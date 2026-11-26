@@ -7,7 +7,7 @@
 [![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
 
-macOS 데스크톱 가장자리에 떠 있는 작은 신호등. [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)로 돌아가지 않아도 각 작업이 실행 중인지, 기다리는지, 끝났는지 알 수 있고, 켜진 램프를 클릭하면 해당 세션으로 이동합니다.
+macOS에서 동작하는 신호등. [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)로 돌아가지 않아도 각 작업이 실행 중인지, 기다리는지, 끝났는지 알 수 있고, 켜진 램프를 클릭하면 해당 세션으로 이동합니다.
 
 <img src="docs/demo.gif" width="452" alt="세션이 돌아가는 동안은 빨강, 기다리는 동안은 노랑, 끝난 세션을 열기 전까지 초록이 켜집니다.">
 
@@ -21,7 +21,7 @@ macOS 데스크톱 가장자리에 떠 있는 작은 신호등. [DeepSeek Harnes
 | 🟡 노랑 | 승인이나 답변을 기다리는 세션이 있음 | DSH를 앞으로 가져오고 **가장 먼저** 기다리는 세션을 엽니다 |
 | 🟢 초록 | 끝난 세션의 미확인 점이 DSH에 아직 남아 있음 | DSH를 앞으로 가져오고 **가장 오래된** 미확인 세션을 엽니다 |
 
-세 등은 서로 독립적이라 빨강과 초록이 동시에 켜질 수 있습니다.
+세 등은 서로 독립적이라 빨강과 초록이 동시에 켜질 수 있습니다. 꺼진 등이나 패널 가장자리의 빈 곳을 클릭하면 세션은 바꾸지 않고 DSH만 앞으로 가져옵니다.
 
 ## 설치
 

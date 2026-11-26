@@ -17,6 +17,7 @@ Needs the Xcode command line tools (`swiftc`). The script builds `arm64` and `x8
 - Drag anywhere on the lamp body to move it; the position is stored in `UserDefaults` and clamped to the visible screen.
 - A click is only a click: if the pointer moves more than two points, the gesture is a drag and nothing is triggered.
 - Clicking the red lamp walks the running sessions, one per click, in the order the bridge lists them.
+- Clicking a dark lamp, or any empty spot on the housing, only brings DeepSeek Harness forward; no session is selected.
 - The speed badge above the body appears only while the red lamp is lit and the bridge publishes a rate. Hide it from the menu-bar menu (隐藏速率显示 / 开启速率显示); the panel then shrinks by the badge's 22 points and the choice is stored in `UserDefaults`.
 - The menu-bar menu has three items: hide the panel, toggle the speed badge, quit.
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.7 — 2026-11-26
+
+- Clicking a dark lamp, or any empty spot on the housing, now brings DeepSeek
+  Harness forward without switching sessions.
+- The one-line description now reads “runs on macOS” instead of “floats at the
+  edge of the desktop”.
+
 ## 1.0.6 — 2026-11-26
 
 - The app now ships its own icon: a dark squircle with the three lamps, built

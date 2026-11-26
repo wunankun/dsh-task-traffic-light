@@ -7,7 +7,7 @@
 [![macOS](https://img.shields.io/badge/macOS-13%2B-lightgrey?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![MIT](https://img.shields.io/github/license/wunankun/dsh-task-traffic-light)](LICENSE)
 
-A small traffic light that floats at the edge of your macOS desktop: see whether each task is running, waiting for you, or already finished without switching back to [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), then click a lit lamp to jump to that session.
+A traffic light that runs on macOS: see whether each task is running, waiting for you, or already finished without switching back to [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), then click a lit lamp to jump to that session.
 
 <img src="docs/demo.gif" width="452" alt="The lamp lights as sessions run and wait; it stays green until you open the finished session.">
 
@@ -21,7 +21,7 @@ A small traffic light that floats at the edge of your macOS desktop: see whether
 | 🟡 yellow | a session waits for your approval or answer | brings DSH forward and opens the **first** waiting session |
 | 🟢 green | a finished session still shows its unread dot in DSH | brings DSH forward and opens the **oldest** unread session |
 
-The lamps are independent: a red and a green lamp can be lit at the same time.
+The lamps are independent: a red and a green lamp can be lit at the same time. Clicking a dark lamp, or the empty edge of the panel, just brings DSH forward without switching sessions.
 
 ## Install
 

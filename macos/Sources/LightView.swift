@@ -119,6 +119,10 @@ final class LightView: NSView {
     /// human, so the owner can focus DSH and switch to the first one.
     var focusWaiting: (() -> Void)?
 
+    /// A click on a dark lamp or on the empty edge of the housing: bring
+    /// DeepSeek Harness forward without choosing a session.
+    var openHarness: (() -> Void)?
+
     /// How many top-level sessions are running; only decides whether the red
     /// lamp is lit.
     var runningCount: Int = 0 {
@@ -311,6 +315,8 @@ final class LightView: NSView {
                 focusWaiting?()
             } else if completed, greenLampFrame().insetBy(dx: -5, dy: -5).contains(pressPoint) {
                 focusCompleted?()
+            } else {
+                openHarness?()
             }
         }
         dragStartMouse = nil

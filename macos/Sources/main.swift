@@ -75,6 +75,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         lightView.focusWaiting = { [weak self] in
             self?.focusWaiting()
         }
+        lightView.openHarness = { [weak self] in
+            self?.focusHarness()
+        }
         panel.contentView = lightView
         panel.orderFrontRegardless()
         // Announce the panel with one red → amber → green sweep, then settle
