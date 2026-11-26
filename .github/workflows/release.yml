@@ -52,7 +52,14 @@ jobs:
           if npm view "$name@$version" version >/dev/null 2>&1; then
             echo "$name@$version is already published; nothing to do."
           else
-            npm publish
+            # npm stages a new version for a while: a parallel publish (or a
+            # manual one from the maintainer) shows up as E409. If the version
+            # lands after a short wait, that counts as success.
+            npm publish || {
+              sleep 30
+              npm view "$name@$version" version >/dev/null 2>&1 \
+                && echo "$name@$version was published by another run."
+            }
           fi
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
