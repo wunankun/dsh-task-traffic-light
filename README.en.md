@@ -35,7 +35,7 @@ Or install it from the plugin market in the app. Most setups need a page refresh
 
 **2 — the app:**
 
-The easy way: open **Plugins → this plugin** in DSH and press **Install the lamp app**. It downloads the release, unpacks it into `/Applications`, clears the quarantine flag and launches it. After that the control follows the app: **Running v1.5** while it is open, **Start the lamp app** after you quit it, and **Update to v…** when a newer build ships.
+The easy way: open **Plugins → this plugin** in DSH and press **Install the lamp app**. It downloads the release, unpacks it into `/Applications`, clears the quarantine flag and launches it. After that the control follows the app: **Running** while it is open, **Start** after you quit it, and a small **Update available v1.0.3** line under the button when a newer build ships.
 
 Or do it from a terminal:
 

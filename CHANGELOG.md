@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.3 — 2026-11-26
+
+- One version for both halves from here on: plugin and companion app share
+  1.0.3, matching the git tag.
+- The plugin-page control only tells you what you can do: **已开启** while the
+  app runs, **开启** after you quit it, and a small **可更新** line under the
+  button when a newer build exists instead of replacing the state.
+- The pointing hand now shows up when you hover a lamp you can click, even on
+  the non-activating panel (a tracking area drives it as well as cursor rects).
+
 ## 0.10.5 — 2026-11-26
 
 - The panel announces itself on every launch: red, then amber, then green

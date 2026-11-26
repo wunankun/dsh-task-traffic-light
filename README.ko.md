@@ -35,7 +35,7 @@ dsh plugin add dsh-task-traffic-light
 
 **2 — 앱:**
 
-가장 간단한 방법: DSH에서 **플러그인 → 이 플러그인**을 열고 **Install the lamp app**을 누르세요. 플러그인이 배포판을 내려받아 `/Applications`에 풀고, 격리 속성을 지운 뒤 실행합니다. 이후 이 버튼은 앱 상태를 따라갑니다. 실행 중이면 **Running v1.5**, 종료하면 **Start the lamp app**, 새 버전이 있으면 **Update to v…**. 버튼 문구는 영어와 중국어만 지원합니다.
+가장 간단한 방법: DSH에서 **플러그인 → 이 플러그인**을 열고 **Install the lamp app**을 누르세요. 플러그인이 배포판을 내려받아 `/Applications`에 풀고, 격리 속성을 지운 뒤 실행합니다. 이후 이 버튼은 앱 상태를 따라갑니다. 실행 중이면 **Running**, 종료하면 **Start**, 새 버전이 있으면 버튼 아래에 작은 글씨로 **Update available v1.0.3**. 버튼 문구는 영어와 중국어만 지원합니다.
 
 터미널에서 설치할 수도 있습니다:
 

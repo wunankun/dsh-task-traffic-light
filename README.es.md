@@ -35,7 +35,7 @@ También puedes instalarlo desde el mercado de plugins de la aplicación. Casi s
 
 **2 — la aplicación:**
 
-Lo más sencillo: abre **Plugins → este plugin** en DSH y pulsa **Install the lamp app**. El plugin descarga la versión publicada, la descomprime en `/Applications`, quita la cuarentena y la abre. A partir de ahí el control sigue a la aplicación: **Running v1.5** mientras está abierta, **Start the lamp app** cuando la cierras y **Update to v…** cuando hay una versión nueva. Los textos de la interfaz están en inglés o chino.
+Lo más sencillo: abre **Plugins → este plugin** en DSH y pulsa **Install the lamp app**. El plugin descarga la versión publicada, la descomprime en `/Applications`, quita la cuarentena y la abre. A partir de ahí el control sigue a la aplicación: **Running** mientras está abierta, **Start** cuando la cierras y una línea pequeña **Update available v1.0.3** debajo del botón cuando hay una versión nueva. Los textos de la interfaz están en inglés o chino.
 
 También puedes hacerlo desde la terminal:
 

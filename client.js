@@ -34,9 +34,9 @@ window.__ModuleLoader__.load({
         install: '安装红绿灯小应用',
         installing: '正在下载安装…',
         opening: '正在开启…',
-        open: '开启小应用',
+        open: '开启',
         running: '已开启',
-        update: '更新到',
+        update: '可更新',
         retry: '重试安装',
         unreachable: '连不上插件',
       }
@@ -45,9 +45,9 @@ window.__ModuleLoader__.load({
         install: 'Install the lamp app',
         installing: 'Downloading…',
         opening: 'Starting…',
-        open: 'Start the lamp app',
+        open: 'Start',
         running: 'Running',
-        update: 'Update to',
+        update: 'Update available',
         retry: 'Retry install',
         unreachable: 'plugin unreachable',
       }
@@ -71,6 +71,27 @@ window.__ModuleLoader__.load({
       fontSize: 13,
       lineHeight: '20px',
       color: 'var(--dsw-alias-label-secondary, #9aa0a6)',
+    }
+
+    const stackStyle = {
+      display: 'inline-flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 2,
+      lineHeight: '16px',
+    }
+
+    const linkStyle = {
+      font: 'inherit',
+      fontSize: 11,
+      lineHeight: '14px',
+      padding: 0,
+      border: 'none',
+      background: 'transparent',
+      color: 'var(--dsw-alias-label-secondary, #9aa0a6)',
+      cursor: 'pointer',
+      textDecoration: 'underline',
+      textUnderlineOffset: 2,
     }
 
     const dotStyle = {
@@ -133,11 +154,13 @@ window.__ModuleLoader__.load({
           setState({ phase: 'missing', latest: result.latest })
           return
         }
-        const outdated = result.version !== undefined && result.version !== null && result.version !== result.latest
+        const known = result.version !== undefined && result.version !== null
+          && result.latest !== undefined && result.latest !== null
         setState({
-          phase: outdated ? 'outdated' : result.running === true ? 'running' : 'stopped',
+          phase: result.running === true ? 'running' : 'stopped',
           version: result.version,
           latest: result.latest,
+          update: known && result.version !== result.latest,
         })
       }, [])
 
@@ -178,21 +201,25 @@ window.__ModuleLoader__.load({
         }, state.phase === 'opening' ? LABEL.opening : LABEL.installing)
       }
 
-      if (state.phase === 'running') {
-        return h('span', { style: noteStyle }, h('span', { style: dotStyle }), `${LABEL.running} v${state.version ?? state.latest}`)
-      }
-
-      if (state.phase === 'outdated') {
-        return h('button', {
+      const caption = state.update === true && state.latest !== undefined
+        ? h('button', {
           type: 'button',
-          style: buttonStyle,
+          style: linkStyle,
           onClick: install,
           title: `v${state.version} → v${state.latest}`,
         }, `${LABEL.update} v${state.latest}`)
+        : null
+
+      if (state.phase === 'running') {
+        return h('span', { style: stackStyle },
+          h('span', { style: noteStyle }, h('span', { style: dotStyle }), LABEL.running),
+          caption)
       }
 
       if (state.phase === 'stopped') {
-        return h('button', { type: 'button', style: buttonStyle, onClick: start }, LABEL.open)
+        return h('span', { style: stackStyle },
+          h('button', { type: 'button', style: buttonStyle, onClick: start }, LABEL.open),
+          caption)
       }
 
       const label = state.phase === 'error' ? LABEL.retry : LABEL.install
