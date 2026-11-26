@@ -16,7 +16,8 @@
  */
 import { execFile, spawn } from 'node:child_process'
 import {
-  accessSync, constants, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync,
+  accessSync, constants, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, renameSync, rmSync, statSync,
+  writeFileSync,
 } from 'node:fs'
 import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -39,7 +40,7 @@ const SPEED_WINDOW_MS = 2_500
 /** The shortest span a fresh stream is averaged over, so the first second is not inflated. */
 const MIN_SPAN_MS = 700
 /** The companion app this plugin is half of; its version tracks the macOS release. */
-const APP_VERSION = '1.0.3'
+const APP_VERSION = '1.0.4'
 const APP_NAME = 'TaskTrafficLight.app'
 /** Version-free asset name, so this URL keeps resolving after every release. */
 const APP_ZIP_URL = 'https://github.com/wunankun/dsh-task-traffic-light/releases/latest/download/TaskTrafficLight.zip'
@@ -117,10 +118,18 @@ function run(command, args) {
 async function installApp() {
   const work = mkdtempSync(join(tmpdir(), 'dsh-traffic-light-'))
   try {
-    const response = await fetch(APP_ZIP_URL, { redirect: 'follow', signal: AbortSignal.timeout(120_000) })
-    if (!response.ok) throw new Error(`download failed: HTTP ${response.status}`)
+    // curl rather than fetch: Node's undici gives up on this network's
+    // github.com connections after its 10 s connect timeout, while curl's
+    // happy-eyeballs path gets through.
     const zip = join(work, 'app.zip')
-    writeFileSync(zip, Buffer.from(await response.arrayBuffer()))
+    await run('/usr/bin/curl', [
+      '--fail', '--location', '--silent', '--show-error',
+      '--connect-timeout', '20', '--max-time', '180',
+      '--output', zip, APP_ZIP_URL,
+    ]).catch(error => {
+      throw new Error(`download failed: ${error.message}`)
+    })
+    if (!existsSync(zip) || statSync(zip).size === 0) throw new Error('download failed: empty file')
 
     const unpacked = join(work, 'unpacked')
     mkdirSync(unpacked, { recursive: true })

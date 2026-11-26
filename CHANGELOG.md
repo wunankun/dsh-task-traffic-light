@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.4 — 2026-11-26
+
+- The plugin-page install button downloads the release with `curl` instead of
+  Node's `fetch`: on networks where undici hits its 10 s connect timeout
+  against github.com, the button used to fail and fall back to "retry" while
+  curl gets through. Companion app 1.0.4 keeps both halves on one version.
+
 ## 1.0.3 — 2026-11-26
 
 - One version for both halves from here on: plugin and companion app share
