@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6 — 2026-11-26
+
+- The app now ships its own icon: a dark squircle with the three lamps, built
+  from `macos/make-icon.py` into `Resources/AppIcon.icns`. Finder, the Dock and
+  the menu-bar entry show it after the update.
+
 ## 1.0.5 — 2026-11-26
 
 - The lamps no longer change the pointer: the hand cursor is gone, clicking a

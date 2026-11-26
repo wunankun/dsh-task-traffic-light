@@ -1,6 +1,6 @@
 {
   "name": "dsh-task-traffic-light",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A small traffic light that floats at the edge of your macOS desktop: see whether each task is running, waiting for you, or already finished without switching back to DeepSeek Harness, then click a lit lamp to jump to that session.",
   "type": "module",
   "license": "MIT",
