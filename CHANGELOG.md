@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.8 — 2026-11-27
+
+- Every lamp click that switches sessions now lands on the newest message
+  instead of the position the session was left at; a wheel or drag from the
+  reader stops the push immediately.
+- Plugin-only release: the macOS app is unchanged, so it stays at 1.0.7.
+
 ## 1.0.7 — 2026-11-26
 
 - Clicking a dark lamp, or any empty spot on the housing, now brings DeepSeek

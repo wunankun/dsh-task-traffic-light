@@ -353,6 +353,40 @@ window.__ModuleLoader__.load({
           }
         }
 
+        /**
+         * Land on the newest message after a lamp click.
+         *
+         * DSH restores the reading position a Session was left at, which is
+         * rarely what the lamp means: a click is a request to look at what
+         * just happened. The conversation scrollport carries
+         * `data-conversation-scroll`, so keep pushing it to its floor until
+         * the view settles; a wheel or a drag from the reader cancels the
+         * push, because then they are already deciding where to look.
+         */
+        function scrollConversationToBottom(settleMs = 1600) {
+          const started = Date.now()
+          let cancelled = false
+          const stop = () => {
+            cancelled = true
+          }
+          const scrollerOf = () => document.querySelector('[data-conversation-scroll]')
+          const first = scrollerOf()
+          if (first !== null) {
+            first.addEventListener('pointerdown', stop, { once: true, passive: true })
+            first.addEventListener('wheel', stop, { once: true, passive: true })
+          }
+          const step = () => {
+            if (cancelled || disposed || Date.now() - started > settleMs) return
+            const scroller = scrollerOf()
+            if (scroller !== null) {
+              const floor = Math.max(0, scroller.scrollHeight - scroller.clientHeight)
+              if (Math.abs(scroller.scrollTop - floor) > 1) scroller.scrollTop = floor
+            }
+            setTimeout(step, 90)
+          }
+          step()
+        }
+
         async function poll() {
           if (polling || disposed) return
           polling = true
@@ -371,6 +405,7 @@ window.__ModuleLoader__.load({
             rememberNonce(nonce)
             try {
               ctx.uiWorkspace.openSession(sessionId)
+              scrollConversationToBottom()
             } catch (_error) {
               // A Session that disappeared between the click and the poll is
               // nothing the user can act on here.

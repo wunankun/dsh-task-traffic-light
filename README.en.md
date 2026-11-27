@@ -114,7 +114,7 @@ DSH host plugin ──write──> ~/.dsh/task-traffic-light/state.json <──r
 
 1. Every half second the plugin writes a snapshot: running count, pending interactions, waiting session ids, finished-unread session ids, live speed.
 2. The app polls that file and paints the lamps, so it goes dark by itself when DSH stops.
-3. A click writes `focus.json`; the plugin confirms the target session still shows that lamp, then hands it to the front end over DSH's own local auth channel. The page acknowledges once it switches.
+3. A click writes `focus.json`; the plugin confirms the target session still shows that lamp, then hands it to the front end over DSH's own local auth channel. The page lands on the newest message as it switches, then acknowledges.
 4. A click that is not acknowledged within 30 seconds expires silently, so nothing gets stuck.
 
 <details>

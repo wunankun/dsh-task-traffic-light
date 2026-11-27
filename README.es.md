@@ -114,7 +114,7 @@ Plugin de DSH ──escribe──> ~/.dsh/task-traffic-light/state.json <──l
 
 1. Cada medio segundo el plugin escribe una instantánea: en marcha, pendientes, ids en espera, ids terminados sin leer y velocidad.
 2. La app lo consulta y pinta las luces; si DSH se apaga, se apagan solas.
-3. Al pulsar, la app escribe `focus.json`; el plugin confirma que esa sesión sigue mostrando esa luz y lo entrega al frontend por el canal local de DSH.
+3. Al pulsar, la app escribe `focus.json`; el plugin confirma que esa sesión sigue mostrando esa luz y lo entrega al frontend por el canal local de DSH. Al cambiar, la conversación baja hasta el mensaje más reciente.
 4. Un clic sin confirmar en 30 segundos caduca en silencio.
 
 <details>
